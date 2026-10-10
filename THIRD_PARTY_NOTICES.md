@@ -44,3 +44,14 @@ distributed under the MIT License.
 - License text: `third_party/tabler-icons/LICENSE`
 
 Dependencies fetched through Go modules retain their own licenses and copyright notices. This file is informational and does not replace any component's full license text.
+
+## Windows Binary Packages
+
+Windows installer and portable releases retain this notice, the project license,
+Go runtime license, notices from the modules linked into the backend, embedded
+asset licenses, Microsoft WebView2 SDK notices and .NET distribution notices in
+`licenses/`. `licenses/COMPONENTS.txt` lists the resolved modules/packages.
+These files are copied from the original build dependencies, not substituted
+with a new license. The installer includes a Microsoft-signed Evergreen
+WebView2 bootstrapper and uses it only when the Runtime is absent; its download
+and installation remain subject to Microsoft's applicable terms.
