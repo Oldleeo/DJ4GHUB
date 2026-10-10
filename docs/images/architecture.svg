@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="650" viewBox="0 0 1600 650">
+ <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#f5f7ff"/><stop offset="1" stop-color="#edf7f3"/></linearGradient><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto-start-reverse"><path d="M0 0 L9 4.5 L0 9" fill="#8b9fbe"/></marker></defs>
+ <rect width="1600" height="650" rx="30" fill="url(#bg)"/>
+ <g font-family="Microsoft YaHei, PingFang SC, sans-serif" fill="#23344d">
+  <text x="52" y="73" font-size="31" font-weight="700">两块模块独立运行，云端只负责连接。</text>
+  <text x="52" y="112" font-size="18" fill="#6d8099">本地模式不需要中继；启用远程后，指令仍由插着模块的电脑执行。</text>
+  <rect x="335" y="149" width="610" height="392" rx="25" fill="#fff" stroke="#d3dfef"/>
+  <text x="362" y="188" font-size="22" font-weight="700">Windows 设备主机</text><text x="362" y="216" font-size="16" fill="#7a8aa2">WPF + WebView2 · 一个界面，两个隔离后台</text>
+  <g fill="#fff" stroke="#cad9e5"><rect x="52" y="257" width="207" height="96" rx="22"/><rect x="52" y="393" width="207" height="96" rx="22"/></g>
+  <text x="79" y="298" font-size="23" font-weight="700">4G 模块 A</text><text x="79" y="327" font-size="16" fill="#69819a">SIM / eUICC A</text>
+  <text x="79" y="434" font-size="23" font-weight="700">4G 模块 B</text><text x="79" y="463" font-size="16" fill="#69819a">SIM / eUICC B</text>
+  <rect x="361" y="255" width="556" height="104" rx="20" fill="#edf2fb"/><rect x="361" y="393" width="556" height="104" rx="20" fill="#eaf6f1"/>
+  <text x="386" y="295" font-size="22" font-weight="700">后台 A · AT A · 数据目录 A</text><text x="386" y="329" font-size="17" fill="#637c9c">短信 / 通话 / 卡片 / 通知 / 主机令牌 A</text>
+  <text x="386" y="433" font-size="22" font-weight="700">后台 B · AT B · 数据目录 B</text><text x="386" y="467" font-size="17" fill="#5d897b">短信 / 通话 / 卡片 / 通知 / 主机令牌 B</text>
+  <path d="M262 306 H330" stroke="#8b9fbe" stroke-width="3" marker-end="url(#arrow)"/><path d="M262 443 H330" stroke="#8b9fbe" stroke-width="3" marker-end="url(#arrow)"/><text x="278" y="285" font-size="14" fill="#70829a">USB</text>
+  <rect x="1072" y="252" width="241" height="244" rx="24" fill="#fff" stroke="#ced9e9"/>
+  <text x="1095" y="294" font-size="23" font-weight="700">自己的 HTTPS</text><text x="1095" y="325" font-size="23" font-weight="700">云中继 + 控制台</text>
+  <text x="1095" y="370" font-size="16" fill="#6d839c">单管理员 · 密码 + TOTP</text><text x="1095" y="405" font-size="16" fill="#6d839c">快照 / 命令 / 租约 / 结果</text><text x="1095" y="451" font-size="15" fill="#729084">可选，不取代电脑主机</text>
+  <path d="M946 374 H1061" stroke="#8b9fbe" stroke-width="3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <text x="958" y="337" font-size="15" fill="#6a7f9d">主动连接</text>
+  <rect x="1412" y="290" width="135" height="167" rx="25" fill="#fff" stroke="#ced9e9"/>
+  <rect x="1428" y="309" width="103" height="117" rx="13" fill="#eaf0fb"/><text x="1443" y="357" font-size="21" font-weight="700">浏览器</text><text x="1441" y="390" font-size="16" fill="#6d839c">手机 / 电脑</text>
+  <path d="M1314 374 H1399" stroke="#8b9fbe" stroke-width="3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <text x="1326" y="343" font-size="15" fill="#6a7f9d">HTTPS</text>
+  <text x="52" y="592" font-size="17" fill="#617b94">独立 ≠ 绝对不中断：USB 供电、外部串口占用、驱动与运营商仍影响通信。</text>
+  <text x="52" y="620" font-size="15" fill="#8092a7">架构示意，不含真实设备身份。语音媒体使用 WebRTC，跨网可能另需 TURN。</text>
+ </g>
+</svg>

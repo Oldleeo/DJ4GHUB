@@ -1,0 +1,220 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DJ4GHUB · 老李 Oldlee — GitHub 图文介绍预览</title><style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f8;color:#253047;font:16px/1.8 "Microsoft YaHei",system-ui,sans-serif}article{max-width:1110px;margin:30px auto;padding:44px 54px;background:white;border:1px solid #dce5f0;border-radius:28px;box-shadow:0 15px 60px #1e365b0d}img{max-width:100%;height:auto;border-radius:18px}h1,h2,h3{line-height:1.35;color:#1e2e46}h1{font-size:35px}h2{font-size:25px;margin:45px 0 18px;border-bottom:1px solid #e4eaf3;padding-bottom:12px}p{margin:16px 0}a{color:#246da7;text-decoration:none}a:hover{text-decoration:underline}blockquote{margin:22px 0;padding:14px 22px;border-left:4px solid #a4b9d8;border-radius:0 12px 12px 0;background:#f4f7fc;color:#62738c}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow:auto}td,th{border:1px solid #dce4f0;padding:12px 15px;min-width:110px}th{background:#f4f7fc;text-align:left}td img{max-width:480px;width:100%;border-radius:10px}pre{padding:20px 22px;background:#1e2b40;color:#deebff;border-radius:14px;overflow:auto;font-size:14px}code{font:14px/1.7 Consolas,monospace}p code,li code,td code{background:#f0f4fa;padding:3px 5px;border-radius:5px}details{background:#f5f8fc;padding:15px 20px;border-radius:14px}li{margin:9px 0}summary{cursor:pointer;font-weight:600}.preview-note{font-size:12px;color:#8190a5;margin-top:30px;text-align:center}@media(max-width:800px){article{padding:22px;margin:12px;border-radius:18px}td img{max-width:100%}}
+</style><article><div align="center">
+
+<img src="docs/images/hero.png" width="100%" alt="DJ4GHUB · 老李 Oldlee — 让插在电脑上的 4G 模块，成为随时可控的通讯工作台" />
+
+<h1>DJ4GHUB · 老李 Oldlee</h1>
+<p><strong>一台电脑，两块模块。本地即用，远程可选。</strong></p>
+<p>短信 · 电话 · eSIM · 双模块 · Bark / Telegram · 自建云控制台</p>
+<p>Windows 10 / 11 x64 ｜ Go + WPF + WebView2 ｜ 0.6.7 公开源码准备版</p>
+<p><a href="https://github.com/Oldleeo/DJ4GHUB/actions/workflows/ci.yml"><img src="https://github.com/Oldleeo/DJ4GHUB/actions/workflows/ci.yml/badge.svg" alt="源码检查与构建"></a></p>
+<p><a href="https://github.com/Oldleeo/DJ4GHUB">GitHub 仓库</a> · <a href="https://github.com/Oldleeo/DJ4GHUB/issues">问题反馈</a></p>
+<p><a href="docs/QUICK_START.md">快速开始</a> · <a href="docs/DUAL_MODULES.md">双模块管理</a> · <a href="docs/SELF_HOSTING.md">自建云端</a> · <a href="docs/TECHNICAL_DETAILS.md">技术细节</a> · <a href="https://x.com/oldleeoo">老李的 X</a></p>
+</div>
+
+<blockquote>
+<p>这是面向个人使用的<strong>源码公开版本</strong>，继承上游 <strong>PolyForm Noncommercial 1.0.0</strong> 许可，并非允许任意商用的 MIT / Apache 项目。当前尚未发布 GitHub Release；不提供公共云服务、不附带个人凭据。所有公开截图使用演示数据。</p>
+</blockquote>
+<h2>为什么做这个</h2>
+<p>模块明明插在电脑上，收短信却还要守着电脑；切换卡片时信息不更新；再接一块相同模块，又分不清正在控制谁。DJ4GHUB 把这些操作放到一个工作台里：看状态、收发短信、管理卡片，并在需要时从自己的云端接入。</p>
+<p><img src="docs/images/benefits.png" alt="从痛点到解决方式"></p>
+<p>它不是“把模块变成手机”的万能工具，也不替运营商解除任何限制。它解决的是：<strong>已有兼容模块如何更方便、更明确、更可控地使用。</strong></p>
+<h2>界面预览</h2>
+<p>空间层叠布局、统一深浅色、可调字号与密度，窗口装饰和内容使用同一套主题。配图来自实际页面的演示环境，不包含真实短信、号码、卡片身份或服务器资料。</p>
+<table>
+<thead>
+<tr>
+<th>双模块概览</th>
+<th>短信工作台</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="docs/images/overview.png" alt="双模块概览演示"></td>
+<td><img src="docs/images/messages.png" alt="短信页面演示"></td>
+</tr>
+<tr>
+<td>深色设置</td>
+<td>云端控制台</td>
+</tr>
+<tr>
+<td><img src="docs/images/settings-dark.png" alt="深色设置演示"></td>
+<td><img src="docs/images/cloud.png" alt="云端控制台演示"></td>
+</tr>
+</tbody></table>
+<h2>能做什么</h2>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>本地 Windows</th>
+<th>可选云控制台</th>
+<th>使用边界</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>模块、SIM、信号、网络状态</td>
+<td>✓</td>
+<td>✓</td>
+<td>状态来自设备；断电或离线不能通信</td>
+</tr>
+<tr>
+<td>双模块识别、切换与独立数据</td>
+<td>✓</td>
+<td>✓</td>
+<td>两块实机已做过验证；不是保证任意数量</td>
+</tr>
+<tr>
+<td>短信收件箱、发送、单条删除</td>
+<td>✓</td>
+<td>✓</td>
+<td>操作可能产生运营商费用；删除不可撤销</td>
+</tr>
+<tr>
+<td>拨号、接听、挂断、DTMF</td>
+<td>✓</td>
+<td>✓</td>
+<td>SIM、运营商、固件必须支持语音</td>
+</tr>
+<tr>
+<td>通话音频桥接</td>
+<td>USB 音频</td>
+<td>WebRTC</td>
+<td>需兼容音频设备；跨网可能需要 TURN</td>
+</tr>
+<tr>
+<td>eSIM 二维码解析、Profile 下载/启停/改名/删除</td>
+<td>✓</td>
+<td>✓</td>
+<td>必须插入兼容 eUICC；普通实体 SIM 不支持</td>
+</tr>
+<tr>
+<td>Bark / Telegram 新短信通知</td>
+<td>✓</td>
+<td>✓ 配置</td>
+<td>自备密钥；短信内容会发给对应推送服务</td>
+</tr>
+<tr>
+<td>保号提醒与记录</td>
+<td>✓</td>
+<td>✓</td>
+<td>辅助提醒，不自动充值，不保证满足各运营商条款</td>
+</tr>
+<tr>
+<td>APN / 网络配置、联网状态</td>
+<td>✓</td>
+<td>✓ 主要管理操作</td>
+<td>Windows 路由和适配器仍由本机执行</td>
+</tr>
+<tr>
+<td>高级 AT 调试</td>
+<td>默认隐藏</td>
+<td>未提供默认界面入口</td>
+<td>只给明确知道指令影响的人使用</td>
+</tr>
+<tr>
+<td>UI、主机诊断、开机自启、托盘</td>
+<td>✓</td>
+<td>部分显示/操作不同</td>
+<td>原生窗口、托盘、自启不是浏览器功能</td>
+</tr>
+</tbody></table>
+<p><strong>云端覆盖主要模块管理流程，不等于浏览器具有 Windows 原生功能。</strong> 具体对照见<a href="docs/FAQ.md">功能与限制</a>。云端不是脱离设备的模拟器：操作最终仍由插着模块的电脑执行。</p>
+<h2>三步开始本地使用</h2>
+<ol>
+<li>在 Windows 10/11 x64 上准备兼容 DJI 4G 模块、稳定 USB 供电、已签名 USB/AT 驱动和 WebView2 Runtime。</li>
+<li>使用未来 Release 的完整便携包，或按下面命令构建。<strong>完整解压后双击 <code>DJ4Hub.Windows.exe</code>，不要单独复制 EXE。</strong></li>
+<li>插入一块或两块模块，选择模块卡片，即可查看状态和收件箱。先用低风险读取操作确认识别，再自行测试短信与电话。</li>
+</ol>
+<p><strong>不启用云同步也能正常使用本地功能。</strong> 默认云地址为空、主机同步关闭；本地后台只监听 <code>127.0.0.1</code>。</p>
+<details>
+<summary>从源码构建 Windows 包</summary>
+
+<p>需要 Git、Go（版本见 <code>go.mod</code>）和 .NET 8 SDK。以下命令在 Windows PowerShell 中执行：</p>
+<pre><code class="language-powershell"># 下载/克隆本仓库后，先进入仓库根目录
+./scripts/audit-public.ps1
+./scripts/build-windows.ps1
+# 完成后启动 dist/windows/portable/DJ4Hub.Windows.exe
+</code></pre>
+<p>源码公开包本身不是可直接双击的安装包。构建不会安装驱动，也不会把用户私人数据打进程序。</p>
+</details>
+
+<p>更多首次使用、通知配置与 eSIM 步骤，见<a href="docs/QUICK_START.md">完整使用指南</a>。</p>
+<h2>两块模块，为什么不只是“两个按钮”</h2>
+<p><img src="docs/images/architecture.png" alt="双模块隔离与云端连接结构"></p>
+<p>每块模块都有独立后台进程、AT 通道、数据目录和云端主机身份。切换页面只是切换当前控制对象，不会把 A 的短信当成 B 的短信。一个主机恢复时，另一个主机可以继续工作。</p>
+<p>初次发现第二块模块时，会在本机复制已有的通知设置作为默认值；<strong>之后两块模块的通知配置独立，云同步也必须分别启用。</strong> 公开包不会预绑定任何人的 Bark 或 Telegram。</p>
+<p><a href="docs/DUAL_MODULES.md">查看双模块完整说明 →</a></p>
+<h2>想在手机上远程用？自建云端是可选项</h2>
+<p>设备主机主动连自己的 HTTPS 中继，浏览器访问 <code>/panel/</code>。不需要把本机 AT 服务暴露到公网，也不需要给电脑做端口转发。</p>
+<p>仓库提供 Docker Compose + Caddy 部署模板，准备好 Linux 服务器、域名和 Docker 后：</p>
+<pre><code class="language-bash">cd deploy/selfhost
+cp .env.example .env
+# 编辑 .env：填写自己的域名和 ACME 邮箱
+docker compose up -d --build
+</code></pre>
+<p>控制台使用密码和 TOTP；Windows 主机首次注册使用服务器生成的 <code>owner.token</code>。两者不是同一个密码。部署、凭据读取、双模块绑定、备份与更新见<a href="docs/SELF_HOSTING.md">自建云端指南</a>。</p>
+<blockquote>
+<p>中继是单管理员/个人实例，不是多用户 SaaS。Docker 模板本机未做真实公网部署验证；CI 提供构建检查，正式使用前仍需在自己的服务器验证 HTTPS、登录、注册和完整操作链路。语音跨网络场景另需检查 TURN。</p>
+</blockquote>
+<h2>稳定性与安全，具体做了什么</h2>
+<ul>
+<li>串口所有权互斥、限定设备发现范围，避免本软件的扫描和主机互相争抢。</li>
+<li>每模块独立健康检查、故障恢复与退避；父进程退出后清理所属后台。</li>
+<li>云端变更命令落盘去重；异常时不盲目重发短信或拨号，结果不明需人工核对。</li>
+<li>SIM 信息读取失败视为“未知”，不把临时错误直接当成“没插卡”。</li>
+<li>HTTPS、密码 + TOTP、会话和命令权限检查；云端持久化状态使用 AES-GCM。</li>
+<li>发布前使用独立脱敏目录，排除私人配置、运行数据、旧日志、备份和原仓库 Git 历史。</li>
+</ul>
+<p>这些是设计措施和已实现的保护，不是“永不掉线”的保证。USB 供电、第三方串口工具、驱动和运营商仍会影响实际使用。<a href="docs/PRIVACY.md">隐私说明</a> · <a href="SECURITY.md">安全说明</a></p>
+<h2>文档入口</h2>
+<table>
+<thead>
+<tr>
+<th>想了解什么</th>
+<th>阅读这里</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装、首次使用、短信、eSIM、通知</td>
+<td><a href="docs/QUICK_START.md">快速开始</a></td>
+</tr>
+<tr>
+<td>模块识别、切换、绑定、故障隔离</td>
+<td><a href="docs/DUAL_MODULES.md">双模块管理</a></td>
+</tr>
+<tr>
+<td>云端部署、凭据、TLS、备份、TURN</td>
+<td><a href="docs/SELF_HOSTING.md">自建云端</a></td>
+</tr>
+<tr>
+<td>进程、串口、API、数据一致性、安全</td>
+<td><a href="docs/TECHNICAL_DETAILS.md">技术细节</a></td>
+</tr>
+<tr>
+<td>不识别、普通 SIM 报错、离线、音频</td>
+<td><a href="docs/FAQ.md">常见问题</a></td>
+</tr>
+<tr>
+<td>数据去哪、哪些不上传、通知风险</td>
+<td><a href="docs/PRIVACY.md">隐私说明</a></td>
+</tr>
+<tr>
+<td>许可来源、商业使用限制</td>
+<td><a href="docs/SOURCE_AND_LICENSE.md">源码与许可</a></td>
+</tr>
+<tr>
+<td>首次上传 GitHub 的检查步骤</td>
+<td><a href="docs/PUBLISHING.md">发布清单</a></td>
+</tr>
+<tr>
+<td>参与开发、回归与配图更新</td>
+<td><a href="CONTRIBUTING.md">贡献指南</a></td>
+</tr>
+</tbody></table>
+<p>源码现发布于 <a href="https://github.com/Oldleeo/DJ4GHUB">Oldleeo/DJ4GHUB</a>。构建状态以 <a href="https://github.com/Oldleeo/DJ4GHUB/actions">GitHub Actions</a> 为准；尚未提供正式二进制 Release。</p>
+<h2>版权与致谢</h2>
+<p>© 2026 <strong>老李 Oldlee</strong>，本版本的品牌、界面与新增贡献。作者 X：<a href="https://x.com/oldleeoo"><strong>@oldleeoo</strong></a>。</p>
+<p>本项目含上游 VoHive 衍生代码，保留必需声明：<strong>Copyright iniwex5</strong>（<a href="https://github.com/iniwex5/vohive">VoHive</a>）；另参考 DJOneHub 的相关工作。完整条款见 <a href="LICENSE">LICENSE</a> 与 <a href="THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>。第三方图标与库保留各自许可。</p>
+<p>DJI / 大疆及相关名称、商标属于其权利人。DJ4GHUB 不是 DJI 官方软件，不隶属于 DJI，也未声明获得其认证。老李 IP 头像及品牌素材不自动授予独立商业使用或冒充作者的权利；权利说明见<a href="docs/SOURCE_AND_LICENSE.md">许可文档</a>。</p>
+<p class="preview-note">本地 README 排版预览 · GitHub 实际渲染可能略有不同 · 配图均为演示数据</p></article></html>

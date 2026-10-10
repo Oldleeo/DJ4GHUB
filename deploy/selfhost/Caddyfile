@@ -1,0 +1,6 @@
+{
+    email {$ACME_EMAIL}
+}
+{$RELAY_DOMAIN} {
+    reverse_proxy relay:18444
+}

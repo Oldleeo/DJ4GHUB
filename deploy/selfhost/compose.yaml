@@ -1,0 +1,32 @@
+services:
+  relay:
+    build:
+      context: ../..
+      dockerfile: deploy/selfhost/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - relay_data:/data
+    # Deliberately no published HTTP port: only Caddy can reach this listener.
+    networks: [hub]
+    security_opt: [no-new-privileges:true]
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on: [relay]
+    environment:
+      RELAY_DOMAIN: ${RELAY_DOMAIN:?Set RELAY_DOMAIN in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?Set ACME_EMAIL in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [hub]
+networks:
+  hub:
+volumes:
+  relay_data:
+  caddy_data:
+  caddy_config:

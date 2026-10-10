@@ -1,0 +1,10 @@
+.git
+.env
+**/secrets
+dist
+artifacts
+**/bin
+**/obj
+.cache
+node_modules
+*.zip

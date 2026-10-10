@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="590" viewBox="0 0 1600 590">
+ <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#f7f9fe"/><stop offset="1" stop-color="#eef4ff"/></linearGradient></defs>
+ <rect width="1600" height="590" rx="30" fill="url(#bg)"/>
+ <g font-family="Microsoft YaHei, PingFang SC, sans-serif">
+  <text x="55" y="73" font-size="30" font-weight="700" fill="#20304c">不是功能堆砌，是把日常操作理顺。</text>
+  <text x="55" y="110" font-size="18" fill="#6c7e98">从守着电脑，到明确控制；从多个零散工具，到一套自己的工作台。</text>
+  <g fill="#fff" stroke="#dce5f1"><rect x="55" y="150" width="727" height="176" rx="24"/><rect x="802" y="150" width="743" height="176" rx="24"/><rect x="55" y="346" width="727" height="176" rx="24"/><rect x="802" y="346" width="743" height="176" rx="24"/></g>
+  <g font-size="16" fill="#5570a0"><text x="81" y="188">01 / 短信不必守在电脑前</text><text x="828" y="188">02 / 两块同款模块不再混淆</text><text x="81" y="384">03 / 读错状态，不等于卡片消失</text><text x="828" y="384">04 / 本地不依赖作者的服务器</text></g>
+  <g font-size="25" font-weight="700" fill="#243652"><text x="81" y="234">可选云控制 + Bark / Telegram</text><text x="828" y="234">独立进程、通道、数据与身份</text><text x="81" y="430">未知、离线、恢复状态明确区分</text><text x="828" y="430">不开云能用，开云自己掌控</text></g>
+  <g font-size="18" fill="#72839a"><text x="81" y="277">主机在线时远程管理；通知服务由你自行选择。</text><text x="828" y="277">切换控制对象，不混合 A / B 的短信和卡片。</text><text x="81" y="473">减少误读与盲目重复命令，不宣称永不掉线。</text><text x="828" y="473">默认不填私人云地址，不预置任何推送密钥。</text></g>
+  <text x="55" y="563" font-size="15" fill="#8796ab">能力依赖兼容硬件、驱动、卡片与网络；普通实体 SIM 不具备 eSIM Profile 管理能力。</text>
+ </g>
+</svg>

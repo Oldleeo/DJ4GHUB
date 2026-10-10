@@ -1,0 +1,408 @@
+/* Spatial v2: preview-derived composition, explicit surfaces, stable controls. */
+body.spatial-ui {
+  --sp-ink:#202b3b;--sp-muted:#697789;--sp-surface:#fff;--sp-soft:#edf0f5;--sp-line:#e1e7ef;--sp-accent:#303949;--sp-glow:#eef3fc;
+  --sp-shadow:0 2px 6px #34406104,0 12px 30px #34406108;--sp-spring:cubic-bezier(.22,.72,.16,1);--sp-focus:#6b8ebd;--sp-primary-text:#fff;
+  --canvas:#f0f3f8;--surface:var(--sp-surface);--surface-raised:var(--sp-surface);--surface-soft:var(--sp-soft);--surface-active:#eef1f6;--field:var(--sp-surface);
+  --text:var(--sp-ink);--text-default:var(--sp-ink);--muted:var(--sp-muted);--dim:var(--sp-muted);--line:var(--sp-line);--hairline:var(--sp-line);
+  --accent:var(--sp-accent);--accent-strong:var(--sp-accent);--accent-soft:var(--sp-soft);--green:var(--sp-accent);--green-dark:var(--sp-accent);
+  --sidebar-width:90px;--radius-lg:25px;--radius-md:18px;--radius-sm:13px;
+  margin:0;min-width:320px;color:var(--sp-ink);color-scheme:light;
+  font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+  background:radial-gradient(ellipse at 72% 7%,#d7e3fa 0,transparent 47%),radial-gradient(ellipse at 3% 95%,#dfeddf 0,transparent 40%),#f0f3f8;
+  background-attachment:fixed;
+}
+html:has(body.spatial-ui) {background:#f0f3f8}
+/* Windows WebView2: hide scrollbar paint only; keep overflow and input scrolling intact. */
+html:has(body.is-desktop-host), body.is-desktop-host, body.is-desktop-host * {
+  scrollbar-width:none!important;scrollbar-gutter:auto!important;
+}
+html:has(body.is-desktop-host)::-webkit-scrollbar,
+body.is-desktop-host::-webkit-scrollbar, body.is-desktop-host *::-webkit-scrollbar {
+  display:none!important;width:0!important;height:0!important;
+}
+.spatial-ui * {box-sizing:border-box}
+.spatial-ui [hidden] {display:none!important}
+.spatial-ui :is(button,input,select,textarea) {font-family:inherit}
+.spatial-ui :is(button,.button-link) {
+  min-height:40px;padding:10px 15px;border:1px solid transparent;border-radius:13px;background:var(--sp-accent);color:var(--sp-primary-text);font-size:14px;line-height:1.4;
+  cursor:pointer;opacity:1;font-weight:550;transition:transform 160ms var(--sp-spring),background 160ms,border-color 160ms,box-shadow 180ms;white-space:normal;touch-action:manipulation;
+}
+.spatial-ui :is(button,.button-link):hover:not(:disabled) {opacity:1;transform:none;box-shadow:0 3px 10px #3039490f;border-color:#aebed4}
+.spatial-ui :is(button,.button-link):active:not(:disabled) {transform:scale(.985);box-shadow:none}
+.spatial-ui :is(button,.button-link).secondary {background:var(--sp-surface);color:var(--sp-ink);border-color:var(--sp-line)}
+.spatial-ui :is(button,.button-link).danger {background:#fff3f3;color:#b44250;border-color:#f0dadd}
+.spatial-ui :is(button,.button-link):disabled {opacity:1;background:var(--sp-soft);color:#8592a4;border-color:var(--sp-line);cursor:not-allowed;transform:none;box-shadow:none}
+.spatial-ui :is(button,input,select,textarea,summary):focus-visible {outline:2px solid var(--sp-focus);outline-offset:2px}
+.spatial-ui :is(input,select,textarea) {max-width:100%;min-width:0;min-height:43px;padding:10px 12px;border:1px solid var(--sp-line);border-radius:13px;background:var(--sp-surface);color:var(--sp-ink);font-size:15px;font-weight:400;line-height:1.5}
+.spatial-ui :is(input,textarea)::placeholder {color:var(--sp-muted);opacity:.85}
+.spatial-ui :is(input,select,textarea) {transition:border-color 160ms,box-shadow 160ms;caret-color:var(--sp-ink)}
+.spatial-ui :is(input,select,textarea):focus-visible {box-shadow:0 0 0 3px #6b8ebd12;outline-offset:1px}
+.spatial-ui input[type=checkbox] {width:19px;height:19px;min-height:0;padding:0;flex:none;accent-color:#219b72}
+.spatial-ui input.audio-auto-switch {width:38px;height:22px;min-height:0;padding:0;border:0;border-radius:99px}
+.spatial-ui input[type=range] {min-height:0;padding:0}
+.spatial-ui label {font-size:13px;color:var(--sp-muted)}
+.spatial-ui :is(h1,h2,h3,p,strong,code,pre) {overflow-wrap:anywhere}
+.spatial-ui .app-shell {display:block;min-height:100vh}
+.spatial-ui :is(.app-sidebar,.sidebar) {
+  position:fixed;inset:18px auto 18px 18px;z-index:20;width:72px;height:auto;padding:20px 10px 12px;display:flex;flex-direction:column;align-items:stretch;
+  border:1px solid var(--sp-surface);border-radius:23px;background:var(--sp-surface);box-shadow:0 14px 30px #3440610d;overflow-y:auto;scrollbar-width:thin;
+}
+.spatial-ui .sidebar-brand {display:flex;align-items:center;justify-content:center;padding:0 0 25px;gap:0;flex:none}
+.spatial-ui .sidebar-brand>div {display:none}
+.spatial-ui :is(.brand-icon,.sidebar-avatar) {display:block;width:40px;height:40px;object-fit:contain;padding:1px;flex:none;background:#fff;border:0;border-radius:12px;box-shadow:none}
+.spatial-ui :is(.task-nav,.nav) {display:flex;flex-direction:column;gap:8px;padding:0;margin:0;flex:0 0 auto;overflow:visible;border:0}
+.spatial-ui .nav-label {display:none}
+.spatial-ui :is(.task-nav .tab,#nav .nav-item) {width:100%;min-height:53px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:7px 0;border:0;border-radius:14px;box-shadow:none;background:transparent;color:var(--sp-muted);font-size:11px;line-height:1.3;white-space:nowrap;flex:none}
+.spatial-ui :is(.task-nav .tab,#nav .nav-item):hover {background:var(--sp-soft);transform:none;box-shadow:none}
+.spatial-ui :is(.task-nav .tab,#nav .nav-item).active {background:#eef1f6;color:var(--sp-ink);box-shadow:none}
+.spatial-ui .tab>span {display:block;flex:none}
+.spatial-ui .tab strong {font-size:11px;font-weight:600;color:inherit}
+.spatial-ui .tab small {display:none}
+.spatial-ui :is(.tab svg,.nav-icon) {display:block;width:20px;height:20px;flex:none;filter:none;opacity:1}
+.spatial-ui .tab svg {fill:none;stroke:currentColor;stroke-width:1.8}
+.spatial-ui .nav-item.active .nav-icon {filter:none}
+.spatial-ui .nav-icon {opacity:.6}
+.spatial-ui .nav-item.active .nav-icon {opacity:.88}
+.spatial-ui .workspace-nav-indicator {display:none}
+.spatial-ui .sidebar-footer {position:static;display:flex;flex-direction:column;gap:8px;margin-top:auto;padding:20px 0 0;border:0;flex:none}
+.spatial-ui .sidebar-footer :is(p,small,a) {display:none}
+.spatial-ui .sidebar-footer button {min-height:35px;width:100%;padding:7px 1px;background:var(--sp-soft);color:var(--sp-ink);font-size:11px}
+.spatial-ui :is(.app-main,.main) {width:auto;max-width:1480px;margin:0 0 0 108px;padding:30px 28px 24px;min-height:100vh;background:transparent;overflow:visible}
+.spatial-ui :is(.app-header,.topbar) {position:static;height:auto;min-height:0;display:flex;align-items:center;justify-content:space-between;gap:18px;max-width:none;padding:0 4px;margin:0 0 24px;background:transparent;border:0}
+.spatial-ui .workspace-brand {font-size:12px;line-height:1.5;color:#51647e;margin-bottom:7px}
+.spatial-ui :is(.mobile-brand,.page-kicker,#page-kicker) {display:none}
+.spatial-ui :is(.app-header,.topbar) h1 {font-size:29px;font-weight:650;letter-spacing:-.045em;line-height:1.25;margin:0 0 6px}
+.spatial-ui #device-summary {font-size:13px;line-height:1.5;color:var(--sp-muted);margin:0;white-space:normal;overflow:visible}
+.spatial-ui .header-actions {display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap;max-width:55%;padding:0}
+.spatial-ui .mode-control {padding:4px;border:1px solid var(--sp-line);border-radius:16px;background:var(--sp-surface)}
+.spatial-ui .mode-control>span {display:none}
+.spatial-ui .mode-option {min-height:35px;padding:7px 12px;border-radius:12px;background:transparent;color:var(--sp-muted);font-size:13px}
+.spatial-ui .mode-option[aria-pressed=true] {background:var(--sp-accent);color:var(--sp-primary-text)}
+.spatial-ui .mode-option:hover:not(:disabled) {box-shadow:none;transform:none}
+.spatial-ui .workspace-rescan {display:grid;place-items:center;width:42px;height:42px;min-height:42px;padding:0;border-radius:50%;font-size:23px;background:var(--sp-surface)}
+.spatial-ui .workspace-modules {margin:0 0 23px;max-width:none}
+.spatial-ui .workspace-module-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;padding:0}
+.spatial-ui .workspace-module {position:relative;min-width:0;min-height:126px;display:flex;align-items:center;gap:15px;padding:20px;text-align:left;overflow:hidden;isolation:isolate;background:var(--sp-surface);color:var(--sp-ink);border:1px solid var(--sp-surface);border-radius:25px;box-shadow:0 14px 23px #3440610c}
+.spatial-ui .workspace-module[aria-pressed=true] {border-color:#aebed4;background:var(--sp-surface);box-shadow:0 15px 29px #3440611b}
+.spatial-ui .workspace-module[aria-pressed=true]:after {content:"";position:absolute;left:20px;bottom:0;width:44px;height:2px;background:var(--sp-accent);border-radius:3px 3px 0 0}
+.spatial-ui .workspace-module:hover:not(:disabled) {transform:translateY(-2px);box-shadow:0 12px 26px #34406114}
+.spatial-ui[data-workspace-view]:not([data-workspace-view=overview]) .workspace-module {min-height:94px;padding:15px 20px}
+.spatial-ui[data-workspace-view]:not([data-workspace-view=overview]) .workspace-device-shape {width:36px;height:53px;border-radius:11px}
+.spatial-ui[data-workspace-view]:not([data-workspace-view=overview]) .workspace-device-shape:before {left:10px}
+.spatial-ui :is(.workspace-module,.workspace-focus):before {content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(220px circle at var(--spot-x,100%) var(--spot-y,0%),#fff9 0,transparent 75%);opacity:.7}
+.spatial-ui .workspace-device-shape {position:relative;flex:none;width:43px;height:66px;border:1px solid #d3ddda;border-radius:13px;background:linear-gradient(135deg,#fff,#e6eceb);box-shadow:inset 0 2px 2px #fff,2px 4px 8px #273a3d12}
+.spatial-ui .workspace-device-shape:before {content:"";position:absolute;bottom:-5px;left:14px;width:15px;height:7px;border:1px solid #c1ceca;border-radius:0 0 4px 4px;background:#dce4e1}
+.spatial-ui .workspace-device-shape:after {content:"";position:absolute;top:9px;right:8px;width:4px;height:4px;border-radius:50%;background:#30ae83}
+.spatial-ui .workspace-module-copy {display:grid;gap:6px;min-width:0;flex:1}
+.spatial-ui .workspace-module-name {font-size:15px;font-weight:600;line-height:1.35;padding-right:10px}
+.spatial-ui .workspace-module-meta {font-size:12px;color:var(--sp-muted);line-height:1.4}
+.spatial-ui .workspace-module-state {font-size:12px;color:#26745f}
+.spatial-ui .workspace-module-state:before {content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:1px}
+.spatial-ui .workspace-module.is-offline .workspace-module-state {color:#8c7b64}
+.spatial-ui .workspace-module-check {display:none;position:absolute;right:13px;top:13px;width:17px;height:17px;align-items:center;justify-content:center;border:1px solid #8798b0;border-radius:50%;font-size:11px}
+.spatial-ui .workspace-module[aria-pressed=true] .workspace-module-check {display:flex}
+.spatial-ui .workspace-device-placeholder {padding:24px;color:var(--sp-muted);border:1px dashed var(--sp-line);border-radius:20px}
+.spatial-ui .view {max-width:none;margin:0;animation:none}
+.spatial-ui .view:not(.active) {display:none}
+.spatial-ui .app-main:has(#overview.active) {height:auto;min-height:100vh;overflow:visible}
+.spatial-ui .view.overview.active {display:block;height:auto}
+.spatial-ui .view-intro {display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;min-height:0;flex-wrap:wrap}
+.spatial-ui .view-intro :is(.section-kicker,h2,.view-intro-copy,.view-meta) {display:none}
+.spatial-ui[data-console=cloud] .view-intro>div:first-child>p {display:none}
+.spatial-ui #sms>.view-intro {display:none}
+.spatial-ui .view-intro p {font-size:13px;margin:0;color:var(--sp-muted)}
+.spatial-ui .workspace-focus {position:relative;isolation:isolate;overflow:hidden;padding:25px;border:1px solid var(--sp-line);border-radius:25px;background:linear-gradient(125deg,var(--sp-surface) 0%,var(--sp-surface) 40%,var(--sp-glow) 100%);box-shadow:var(--sp-shadow);margin:0 0 16px}
+.spatial-ui .workspace-focus-top {display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.spatial-ui .workspace-pill {display:inline-flex;padding:5px 10px;border-radius:10px;background:#e8edf6;color:#506582;font-size:12px;margin:0 0 8px}
+.spatial-ui .workspace-focus h2 {font-size:27px;font-weight:650;line-height:1.25;letter-spacing:-.045em;margin:0 0 3px}
+.spatial-ui .workspace-focus p {font-size:14px;line-height:1.5;color:var(--sp-muted);margin:0}
+.spatial-ui .workspace-card-state {font-size:12px;line-height:1.4;white-space:nowrap;border-radius:30px;background:#edf8f2;color:#18705b;padding:5px 10px}
+.spatial-ui .workspace-focus-actions {display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:18px}
+.spatial-ui .workspace-focus-stats {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:21px 0 0}
+.spatial-ui .workspace-stat {min-width:0;border:0;border-top:1px solid var(--sp-line);padding:15px 0 0;margin:0;background:transparent;box-shadow:none}
+.spatial-ui .workspace-stat>span {display:block;font-size:12px;color:var(--sp-muted)}
+.spatial-ui .workspace-stat>strong {display:block;font-size:20px;font-weight:600;line-height:1.35;letter-spacing:-.025em;margin:5px 0 0;color:var(--sp-ink)}
+.spatial-ui .workspace-stat>small {display:none}
+.spatial-ui .workspace-detail-grid {display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.spatial-ui :is(.workspace-panel,.surface-panel,.card,.settings-section,.settings-card,.maintenance-panel,.retention-card,.remote-card,.notification-channel,.network-summary-card) {min-width:0;border:1px solid var(--sp-line);border-radius:25px;padding:23px;background:var(--sp-surface);box-shadow:var(--sp-shadow)}
+.spatial-ui .workspace-panel h3 {font-size:15px;font-weight:600;margin:0 0 14px}
+.spatial-ui .workspace-panel-heading {display:flex;justify-content:space-between;align-items:center;gap:10px}
+.spatial-ui .workspace-panel-heading h3 {margin:0}
+.spatial-ui .workspace-link {min-height:30px;padding:4px 0;color:var(--sp-accent);background:transparent;font-size:13px;box-shadow:none}
+.spatial-ui .workspace-recent-row {display:flex;align-items:center;justify-content:flex-start;gap:12px;width:100%;padding:12px 0;min-width:0;text-align:left;background:transparent;color:var(--sp-ink);border:0;border-bottom:1px solid var(--sp-line);border-radius:0;box-shadow:none}
+.spatial-ui .workspace-recent-row:last-child {border:0;padding-bottom:0}
+.spatial-ui .workspace-recent-row:hover {transform:none;box-shadow:none}
+.spatial-ui .workspace-message-symbol {width:35px;height:35px;display:grid;place-items:center;border-radius:12px;background:var(--sp-soft);font-size:20px;flex:none}
+.spatial-ui .workspace-symbol {width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.spatial-ui .workspace-recent-row>span:last-child {min-width:0}
+.spatial-ui .workspace-recent-row strong {display:block;font-size:13px;font-weight:550}
+.spatial-ui .workspace-recent-row small {display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;max-width:100%;color:var(--sp-muted);margin-top:3px}
+.spatial-ui .workspace-setting-row {width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;border:0;border-bottom:1px solid var(--sp-line);border-radius:0;background:transparent;color:var(--sp-ink);padding:11px 0;font-size:13px;text-align:left;box-shadow:none}
+.spatial-ui .workspace-setting-row:last-child {border:0}
+.spatial-ui .workspace-setting-row:hover {transform:none;box-shadow:none}
+.spatial-ui .workspace-setting-value {color:var(--sp-muted)}
+.spatial-ui .is-good {color:#187a5f}
+.spatial-ui .workspace-diagnostics {margin:0 0 20px}
+.spatial-ui :is(.workspace-diagnostics,.workspace-device-tools,.fold-panel,.profile-panel) {border:1px solid var(--sp-line);border-radius:20px;background:var(--sp-surface);color:var(--sp-ink)}
+.spatial-ui .workspace-diagnostics>summary,.spatial-ui .workspace-device-tools>summary {font-size:13px;padding:15px 20px;cursor:pointer}
+.spatial-ui .workspace-diagnostics[open] {padding:0 20px 20px}
+.spatial-ui .workspace-diagnostics[open]>summary {margin:0 -20px 10px}
+.spatial-ui .status-grid {grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.spatial-ui :is(.status-grid>div,.stats>article) {padding:14px;border:1px solid var(--sp-line);border-radius:14px;background:var(--sp-soft);box-shadow:none}
+.spatial-ui :is(.status-grid span,.stats span) {font-size:12px}
+.spatial-ui :is(.status-grid strong,.stats strong) {font-size:18px;line-height:1.4}
+.spatial-ui :is(.status-grid small,.stats small,.activity-note,.activity-updated,.activity-row,.activity-meta) {font-size:12px;line-height:1.5}
+.spatial-ui .activity-section {margin-top:20px;min-height:0}
+.spatial-ui .activity-panel {background:var(--sp-surface);border-color:var(--sp-line);border-radius:18px}
+.spatial-ui .activity-list {min-height:90px}
+.spatial-ui .overview-heading small {font-size:12px}
+.spatial-ui .workspace-inbox-actions {justify-content:flex-end;margin:0 0 14px;min-height:0}
+.spatial-ui .workspace-inbox-actions>div:first-child {display:none}
+.spatial-ui .workspace-sms-layout {display:grid;grid-template-columns:225px minmax(0,1fr);padding:0;border:1px solid var(--sp-line);border-radius:25px;background:var(--sp-surface);box-shadow:var(--sp-shadow);overflow:hidden;min-height:435px;margin-bottom:20px}
+.spatial-ui .workspace-threads {min-width:0;background:#f7f9fc;border-right:1px solid var(--sp-line);padding:12px;display:flex;flex-direction:column}
+.spatial-ui :is(.sms-inbox-toolbar,.sms-toolbar) {display:grid;grid-template-columns:minmax(0,1fr);gap:7px;margin:0 0 12px}
+.spatial-ui :is(.sms-inbox-toolbar label,.sms-toolbar label) {width:100%;min-width:0}
+.spatial-ui :is(#sms-filter) {width:100%;min-height:38px;font-size:13px;padding:8px 10px;background:var(--sp-surface)}
+.spatial-ui :is(#sms-visible-count,#sms-visible) {font-size:11px;color:var(--sp-muted)}
+.spatial-ui .workspace-thread-list {display:grid;align-content:start;gap:4px;max-height:500px;overflow:auto}
+.spatial-ui .workspace-thread {display:grid;grid-template-columns:35px minmax(0,1fr);align-items:center;gap:9px;text-align:left;width:100%;padding:13px 9px;min-height:68px;background:transparent;color:var(--sp-ink);border-radius:14px;box-shadow:none}
+.spatial-ui .workspace-thread[aria-pressed=true] {background:#e8edf5}
+.spatial-ui .workspace-thread:hover {background:#edf1f6;transform:none;box-shadow:none}
+.spatial-ui .workspace-thread-initial {width:35px;height:35px;display:grid;place-items:center;border-radius:50%;background:#e0e7f1;color:#506582;font-size:13px;font-weight:600}
+.spatial-ui .workspace-thread-copy {min-width:0}
+.spatial-ui .workspace-thread strong {display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spatial-ui .workspace-thread small {display:block;font-size:11px;color:var(--sp-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.spatial-ui .workspace-conversation {min-width:0;display:flex;flex-direction:column;background:var(--sp-surface)}
+.spatial-ui .workspace-conversation-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 19px;border-bottom:1px solid var(--sp-line)}
+.spatial-ui .workspace-conversation-heading strong {font-size:14px;font-weight:600}
+.spatial-ui .workspace-conversation-heading small {display:block;font-size:11px;margin-top:3px;color:var(--sp-muted)}
+.spatial-ui .workspace-conversation-status {display:block;font-size:11px;line-height:1.5;margin:3px 0 0;color:var(--sp-muted)}
+.spatial-ui .workspace-new-message {min-height:32px;padding:6px 10px;font-size:12px}
+.spatial-ui .workspace-chat-list {display:flex;flex-direction:column;gap:17px;min-height:150px;max-height:410px;overflow-y:auto;flex:1;align-items:stretch;padding:20px;margin:0;background:transparent;border:0}
+.spatial-ui .workspace-message {display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0}
+.spatial-ui .workspace-message time {font-size:11px;color:var(--sp-muted);padding:0 2px}
+.spatial-ui .workspace-bubble {max-width:92%;min-width:0;padding:14px 16px;border-radius:17px 17px 17px 5px;background:#f0f3f7;font-size:14px;color:var(--sp-ink)}
+.spatial-ui .workspace-bubble p {white-space:pre-wrap;overflow-wrap:anywhere;margin:0;line-height:1.65}
+.spatial-ui .workspace-code {margin-top:11px;border:1px solid #d7e0ee;border-radius:10px;background:var(--sp-surface);color:var(--sp-ink);font-size:14px;letter-spacing:.08em;padding:9px 12px;min-height:37px}
+.spatial-ui .workspace-message-actions {display:flex;gap:6px;flex-wrap:wrap}
+.spatial-ui .workspace-message-actions button {font-size:11px;min-height:28px;padding:5px 9px;border-radius:9px}
+.spatial-ui .workspace-composer {display:grid;gap:8px;flex:none;margin:0;border:0;border-top:1px solid var(--sp-line);border-radius:0;padding:14px;background:var(--sp-surface)}
+.spatial-ui .workspace-composer :is(.recipient-field,label) {display:flex;align-items:center;gap:9px;min-width:0;border:0;padding:0;margin:0}
+.spatial-ui .workspace-composer :is(.recipient-field>span,label) {font-size:12px}
+.spatial-ui .workspace-composer label {flex-wrap:wrap}
+.spatial-ui .workspace-composer :is(input,textarea) {flex:1;width:100%;background:#f4f6fa;font-size:14px;min-height:38px}
+.spatial-ui .workspace-composer textarea {height:62px;min-height:62px;padding:10px 12px;border:1px solid var(--sp-line);resize:vertical}
+.spatial-ui .workspace-composer :is(.composer-footer,.form-foot) {display:flex;align-items:center;justify-content:space-between;padding:0;border:0;gap:10px}
+.spatial-ui .workspace-composer :is(.message-counter,#sms-count) {font-size:11px;color:var(--sp-muted)}
+.spatial-ui .workspace-composer .composer-send {width:auto;height:auto;min-height:38px;padding:8px 15px;border-radius:13px}
+.spatial-ui .workspace-composer .composer-send svg {width:17px;height:17px;fill:none;stroke:currentColor}
+.spatial-ui .workspace-empty {font-size:13px;line-height:1.7;color:var(--sp-muted);padding:10px 0;margin:0}
+.spatial-ui :is(.content-grid,.remote-grid,.notification-grid,.retention-grid) {gap:16px}
+.spatial-ui :is(.section-heading h2,.panel-heading strong,.settings-card>strong,.card>h2) {font-size:17px}
+.spatial-ui :is(.section-heading p,.settings-card p,.inline-status,.maintenance-note,.remote-caution) {font-size:13px;line-height:1.6}
+.spatial-ui :is(.actions,.profile-actions,.control-panel,.heading-actions,.view-intro-actions) {gap:9px;flex-wrap:wrap}
+.spatial-ui :is(.settings-grid,.maintenance-grid,.profile-tools-grid,.retention-fields) {gap:13px}
+.spatial-ui :is(.maintenance-grid span,.maintenance-grid small,.hardware-detail span,.detail span,.retention-meta span) {font-size:12px}
+.spatial-ui :is(.maintenance-grid strong,.hardware-detail strong,.detail strong) {font-size:16px;line-height:1.5}
+.spatial-ui .workspace-device-tools {margin-top:20px}
+.spatial-ui .workspace-device-tools .sidebar-device-stack {display:flex;gap:12px;padding:0 18px 18px;margin:0;flex-wrap:wrap}
+.spatial-ui :is(.device-presence,.module-switcher,.sidebar-connection) {min-width:190px;max-width:100%;padding:12px;border-radius:14px;background:var(--sp-soft)}
+.spatial-ui .module-switcher label {min-width:0}
+.spatial-ui .module-switcher select {min-width:0;width:100%;height:auto;font-size:13px}
+.spatial-ui .workspace-theme-settings {margin-top:20px;padding:23px;border:1px solid var(--sp-line);border-radius:25px;background:var(--sp-surface)}
+.spatial-ui .workspace-theme-settings .theme-switch {display:flex;gap:5px;width:max-content;max-width:100%;padding:4px;margin-top:12px;background:var(--sp-soft)}
+.spatial-ui .segmented-control {padding:4px;gap:3px;border:1px solid var(--sp-line);border-radius:16px;background:var(--sp-soft);max-width:100%;flex-wrap:wrap}
+.spatial-ui .segmented-control button {min-height:36px;padding:7px 12px;min-width:54px;border-radius:12px;background:transparent;color:var(--sp-muted);border-color:transparent;box-shadow:none}
+.spatial-ui .segmented-control button[aria-pressed=true] {background:var(--sp-accent);color:var(--sp-primary-text);border-color:var(--sp-accent);box-shadow:0 2px 5px #202b3b12}
+.spatial-ui .segmented-control button:hover {transform:none;box-shadow:none}
+.spatial-ui .settings-card strong {font-size:15px}
+.spatial-ui :is(.settings-card p,.maintenance-toggle small) {font-size:13px;line-height:1.65}
+.spatial-ui .maintenance-toggle {gap:14px}
+.spatial-ui .maintenance-toggle strong {font-size:15px}
+.spatial-ui .maintenance-panel>.section-heading {padding:0;margin:0 0 16px}
+.spatial-ui .esim-intro-actions {display:flex;align-items:center;justify-content:space-between;width:100%;max-width:none;gap:14px}
+.spatial-ui .esim-status {flex:1;min-width:0;white-space:normal;text-align:left;font-size:12px!important;line-height:1.65;overflow:visible}
+.spatial-ui .profile-panel-title .section-kicker {display:none}
+.spatial-ui .profile-tools-grid {grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+.spatial-ui .profile-tools-grid #esim-runtime-section {grid-column:auto}
+.spatial-ui .panel-icon .workspace-symbol {width:15px;height:15px}
+.spatial-ui .workspace-call-actions {display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;margin-top:18px}
+.spatial-ui .workspace-call-actions #phone-dial {order:0;color:#fff;min-width:130px}
+.spatial-ui .workspace-dial-panel #phone-dial:disabled {background:var(--sp-soft);color:#8592a4}
+.spatial-ui .workspace-dial-panel .control-panel {flex-wrap:nowrap;margin-top:12px}
+.spatial-ui .workspace-dial-panel #phone-number {min-height:50px}
+.spatial-ui .workspace-empty {border:1px dashed var(--sp-line);border-radius:14px;padding:18px;text-align:center;background:var(--sp-soft)}
+.spatial-ui .workspace-recent-list>.workspace-empty {margin-top:16px}
+.spatial-ui .workspace-thread-list>.workspace-empty {font-size:12px;padding:15px 10px}
+:root[data-density=compact] .spatial-ui .workspace-module {min-height:104px;padding:14px 18px}
+:root[data-density=compact] .spatial-ui .workspace-module-copy {gap:3px}
+:root[data-density=compact] .spatial-ui[data-workspace-view]:not([data-workspace-view=overview]) .workspace-module {min-height:80px;padding:12px 18px}
+:root[data-density=compact] .spatial-ui :is(.workspace-panel,.workspace-focus,.settings-card,.settings-section,.maintenance-panel,.card,.notification-channel) {padding:18px}
+:root[data-density=compact] .spatial-ui :is(.workspace-focus-stats,.workspace-focus-actions,.workspace-call-actions) {margin-top:14px}
+:root[data-density=compact] .spatial-ui .app-header {min-height:0}
+:root[data-density=compact] .spatial-ui .workspace-chat-list {gap:13px;padding:16px}
+:root[data-density=compact] .spatial-ui .workspace-thread {min-height:56px;padding:10px 8px}
+.spatial-ui .theme-option {min-height:40px;padding:8px 15px;font-size:12px;background:transparent;color:var(--sp-muted)}
+.spatial-ui .theme-option[aria-pressed=true] {background:var(--sp-surface);color:var(--sp-ink)}
+.spatial-ui .theme-option span {font-size:12px}
+.spatial-ui :is(.fold-panel>summary,.profile-panel>summary,.download-panel>summary) {min-height:48px;gap:10px;flex-wrap:wrap;font-size:14px}
+.spatial-ui :is(.fold-panel summary strong,.profile-panel summary strong) {font-size:14px}
+.spatial-ui :is(.fold-panel summary small,.profile-panel summary small) {font-size:12px}
+.spatial-ui :is(.profile-grid,#esim-list) {display:grid;grid-template-columns:1fr;gap:13px}
+.spatial-ui :is(.esim-profile,.profile) {position:relative;padding:20px 23px;border:1px solid var(--sp-line);border-radius:23px;background:var(--sp-surface);box-shadow:var(--sp-shadow);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 18px;min-width:0}
+.spatial-ui :is(.esim-profile.active,.profile.enabled) {border-color:#aebed4;background:#f5f8fd}
+.spatial-ui :is(.esim-profile>strong,.profile>h3) {font-size:17px;line-height:1.4;margin:0;grid-column:1}
+.spatial-ui :is(.esim-profile>p,.profile>p,.profile-metadata) {grid-column:1;min-width:0;font-size:12px;line-height:1.6;margin:0;color:var(--sp-muted)}
+.spatial-ui .profile-description {grid-column:1;min-width:0}
+.spatial-ui .profile-description p {font-size:12px;line-height:1.6}
+.spatial-ui :is(.esim-profile>.profile-actions,.profile>.profile-actions) {grid-column:2;grid-row:1/span 4;justify-content:flex-end;max-width:350px}
+.spatial-ui :is(.profile-badge,.esim-profile>.profile-badge) {position:static;grid-column:1;justify-self:start;font-size:11px}
+.spatial-ui .profile>.badge {grid-column:1;justify-self:start;font-size:11px}
+.spatial-ui .profile-identifier-row {gap:6px;flex-wrap:wrap}
+.spatial-ui .profile-iccid {font-size:12px;overflow-wrap:anywhere;white-space:normal}
+.spatial-ui :is(.profile-toggle-button,.profile-copy-button) {min-height:28px;padding:5px 9px;font-size:11px;white-space:nowrap}
+.spatial-ui .esim-euicc-heading {font-size:13px}
+.spatial-ui :is(.esim-card-state,.esim-qr-import,.notification-channel) {border-radius:20px}
+.spatial-ui :is(.esim-qr-import,.esim-activation-code-row,.esim-qr-actions) {min-width:0;flex-wrap:wrap}
+.spatial-ui :is(.esim-download-grid,.form-grid) {gap:13px}
+.spatial-ui :is(.result-panel,pre.output) {white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.7;border-radius:15px;background:var(--sp-soft);color:var(--sp-ink)}
+.spatial-ui :is(.phone-keypad,.keypad) {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;width:min(263px,100%);margin:20px auto}
+.spatial-ui :is(.phone-keypad button,.keypad button) {display:grid;place-items:center;border:0;border-radius:50%;width:64px;height:64px;padding:0;margin:auto;background:#eef1f6;color:var(--sp-ink);font-size:23px}
+.spatial-ui #phone-number,.spatial-ui #dial-number {font-size:23px;text-align:center;width:100%;line-height:1.4}
+.spatial-ui #calls>.settings-section:first-of-type {text-align:center}
+.spatial-ui #calls .control-panel {justify-content:center}
+.spatial-ui #phone-dial {background:#187c5f;min-width:100px}
+.spatial-ui .workspace-call-layout {display:grid;grid-template-columns:minmax(280px,.8fr) minmax(0,1.2fr);gap:16px;align-items:start}
+.spatial-ui .workspace-call-layout>.settings-section {margin:0}
+.spatial-ui .workspace-dial-panel {text-align:center}
+.spatial-ui .workspace-dial-panel :is(.control-panel,.inline) {display:flex;align-items:center;justify-content:center;flex-wrap:wrap}
+.spatial-ui .workspace-dial-panel .control-panel {flex-wrap:nowrap}
+.spatial-ui .workspace-dial-panel :is(#phone-number,#dial-number) {flex:1 1 calc(100% - 60px);min-width:0;width:auto}
+.spatial-ui .workspace-backspace {width:42px;height:42px;padding:0;font-size:21px;flex:none}
+.spatial-ui .workspace-dial-panel :is(.phone-keypad,.keypad) button {background:#eef1f6;color:var(--sp-ink);border:0}
+.spatial-ui .audio-select .audio-select-trigger {background:var(--sp-surface);color:var(--sp-ink);border:1px solid var(--sp-line);border-radius:13px;font-size:13px}
+.spatial-ui .audio-select .audio-select-option {background:var(--sp-surface);color:var(--sp-ink);font-size:13px}
+.spatial-ui .audio-select .audio-select-option[aria-selected=true] {background:var(--sp-soft)}
+.spatial-ui .workspace-dial-panel #phone-dial {order:5;min-width:130px;border-radius:24px}
+.spatial-ui .workspace-dial-panel #dial-form button[type=submit] {order:5;min-width:130px;border-radius:24px;background:#187c5f;color:#fff}
+.spatial-ui .workspace-dial-panel #dial-form button[type=submit]:disabled {background:var(--sp-soft);color:#8592a4}
+.spatial-ui :is(.modal,.modal-backdrop) {z-index:100;position:fixed;inset:0;padding:24px;display:flex;align-items:center;justify-content:center;background:#14203355;backdrop-filter:blur(8px)}
+.spatial-ui.workspace-modal-open {overflow:hidden}
+.spatial-ui :is(.modal-dialog,.modal-card) {min-width:0;width:min(460px,100%);padding:26px;border:1px solid var(--sp-line);border-radius:28px;background:var(--sp-surface);color:var(--sp-ink);box-shadow:0 30px 80px #11292230;max-height:calc(100dvh - 48px);overflow:auto}
+.spatial-ui :is(.modal-card h2,.modal-heading h2) {font-size:24px;line-height:1.35;margin:0 0 8px}
+.spatial-ui :is(.modal-message,.modal-card p,.modal-field span) {font-size:13px;line-height:1.7}
+.spatial-ui :is(.modal-actions,.actions.end) {display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:22px}
+.spatial-ui :is(#notice,#toast) {position:fixed;left:50%;right:auto;bottom:64px;transform:translateX(-50%);z-index:120;width:max-content;max-width:calc(100vw - 32px);padding:13px 18px;border:1px solid #ffffff20;border-radius:18px;background:#273449;color:#fff;font-size:13px;box-shadow:0 12px 35px #12241f20}
+.spatial-ui .workspace-status-footer {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:23px;padding:12px 8px 0;border-top:1px solid var(--sp-line);font-size:11px;color:var(--sp-muted)}
+.spatial-ui .workspace-status-footer #refresh {width:36px;min-height:36px;padding:0;display:grid;place-items:center;background:var(--sp-soft);color:var(--sp-ink)}
+.spatial-ui .header-device-state {font-size:12px;padding:0;background:transparent}
+.spatial-ui.is-desktop-host .workspace-status-footer {display:flex;border:0;background:transparent;flex-wrap:wrap;gap:12px;margin-top:20px;padding:8px 4px 0}
+.spatial-ui.is-desktop-host .workspace-status-footer .header-device-state {flex:1;min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.6}
+.spatial-ui.is-desktop-host .workspace-status-footer #refresh {flex:none;background:transparent}
+.spatial-ui.is-desktop-host .app-main {padding-top:54px}
+.spatial-ui.is-desktop-host .app-sidebar {top:48px}
+.spatial-ui .desktop-window-chrome {position:fixed;inset:0 0 auto;height:40px;z-index:60;display:flex;align-items:center;gap:2px;padding:0 8px 0 0;background:transparent;border:0;box-shadow:none;user-select:none;app-region:drag;-webkit-app-region:drag}
+.spatial-ui .desktop-window-drag {height:100%;flex:1;app-region:drag;-webkit-app-region:drag}
+.spatial-ui .desktop-window-chrome button {width:36px;min-height:28px;height:28px;padding:7px 10px;border:0;border-radius:8px;background:transparent;color:var(--sp-muted);box-shadow:none;app-region:no-drag;-webkit-app-region:no-drag;flex:none}
+.spatial-ui .desktop-window-chrome button:hover {background:var(--sp-soft);color:var(--sp-ink);box-shadow:none;transform:none}
+.spatial-ui .desktop-window-chrome button:active {transform:none;background:var(--sp-line)}
+.spatial-ui .desktop-window-chrome button[data-window-action=close]:hover {background:#b4425020;color:#db6776}
+.spatial-ui .desktop-window-chrome svg {display:block;width:14px;height:14px}
+.spatial-ui .desktop-window-chrome .is-maximized svg {transform:scale(.85)}
+.spatial-ui[data-console=cloud] .device-hero {display:none}
+.spatial-ui[data-console=cloud] #device {padding:0}
+.spatial-ui[data-console=cloud] .login-shell {background:transparent}
+.spatial-ui[data-console=cloud] .login-card {background:var(--sp-surface);border-radius:28px;border-color:var(--sp-line);box-shadow:0 24px 65px #34406117}
+.spatial-ui[data-console=cloud] .login-brand h1 {color:var(--sp-ink);letter-spacing:-.04em}
+.spatial-ui .switch input[type=checkbox] {position:absolute;opacity:0;width:100%;height:100%;min-height:0;padding:0;inset:0;cursor:pointer;margin:0;pointer-events:auto}
+@media (max-height:720px) and (min-width:701px) {
+  .spatial-ui :is(.app-sidebar,.sidebar) {padding-top:12px}
+  .spatial-ui .sidebar-brand {padding-bottom:14px}
+  .spatial-ui :is(.task-nav,.nav) {gap:4px}
+  .spatial-ui :is(.task-nav .tab,#nav .nav-item) {min-height:47px}
+}
+@media (max-width:1000px) {
+  .spatial-ui :is(.app-main,.main) {padding:25px 20px 22px}
+  .spatial-ui .workspace-module {padding:17px;gap:12px;min-height:112px}
+  .spatial-ui .header-actions {max-width:52%}
+  .spatial-ui :is(.esim-profile>.profile-actions,.profile>.profile-actions) {grid-column:1;grid-row:auto;justify-content:flex-start;max-width:none}
+  .spatial-ui :is(.esim-profile,.profile) {grid-template-columns:minmax(0,1fr)}
+  .spatial-ui .content-grid,.spatial-ui .remote-grid {grid-template-columns:1fr}
+  .spatial-ui .workspace-call-layout {grid-template-columns:1fr}
+  .spatial-ui .stats,.spatial-ui .status-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .spatial-ui .settings-grid {grid-template-columns:1fr}
+  .spatial-ui .workspace-sms-layout {grid-template-columns:185px minmax(0,1fr)}
+}
+@media (max-width:700px) {
+  .spatial-ui :is(.app-sidebar,.sidebar) {position:static;inset:auto;width:auto;margin:12px 12px 0;padding:16px 14px;border-radius:22px;overflow:visible}
+  .spatial-ui .sidebar-brand {justify-content:flex-start;gap:11px;padding-bottom:14px}
+  .spatial-ui .sidebar-brand>div {display:grid}
+  .spatial-ui .sidebar-brand strong {font-size:16px}
+  .spatial-ui .sidebar-brand small {font-size:11px}
+  .spatial-ui :is(.task-nav,.nav) {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;overflow:visible}
+  .spatial-ui :is(.task-nav .tab,#nav .nav-item) {min-height:48px;font-size:12px;white-space:normal;padding:7px 2px}
+  .spatial-ui .tab strong {font-size:12px}
+  .spatial-ui .sidebar-footer {flex-direction:row;padding-top:12px;justify-content:flex-end}
+  .spatial-ui[data-console=local] .sidebar-footer {display:none}
+  .spatial-ui .sidebar-footer button {width:auto;padding:8px 11px}
+  .spatial-ui :is(.app-main,.main) {margin:0;padding:22px 16px 18px;min-height:auto}
+  .spatial-ui :is(.app-header,.topbar) {align-items:flex-start;flex-wrap:wrap;gap:14px}
+  .spatial-ui .workspace-brand {display:none}
+  .spatial-ui .header-actions {max-width:100%;justify-content:flex-start}
+  .spatial-ui .workspace-module-grid {gap:9px}
+  .spatial-ui .workspace-module {min-height:99px;padding:15px 10px;gap:8px}
+  .spatial-ui .workspace-device-shape {display:none}
+  .spatial-ui .workspace-module-name {font-size:13px}
+  .spatial-ui .workspace-module-meta {font-size:11px}
+  .spatial-ui .workspace-module-state {font-size:11px}
+  .spatial-ui .workspace-focus {padding:20px}
+  .spatial-ui .workspace-focus h2 {font-size:23px}
+  .spatial-ui .workspace-card-state {font-size:10px;padding:5px 7px}
+  .spatial-ui .workspace-focus-stats {gap:9px}
+  .spatial-ui .workspace-stat>strong {font-size:18px}
+  .spatial-ui .workspace-detail-grid {grid-template-columns:1fr;gap:13px}
+  .spatial-ui .workspace-sms-layout {display:flex;flex-direction:column;min-height:400px}
+  .spatial-ui .workspace-threads {border-right:0;border-bottom:1px solid var(--sp-line);padding:10px}
+  .spatial-ui .workspace-thread-list {display:flex;overflow-x:auto;gap:7px}
+  .spatial-ui .workspace-thread {width:180px;min-width:160px;flex:0 0 auto;min-height:58px;padding:9px}
+  .spatial-ui .workspace-threads :is(.sms-toolbar,.sms-inbox-toolbar) {grid-template-columns:minmax(0,1fr) auto;align-items:center;margin-bottom:6px}
+  .spatial-ui .workspace-chat-list {max-height:380px;padding:16px;min-height:140px}
+  .spatial-ui .workspace-bubble {max-width:100%;padding:13px}
+  .spatial-ui .workspace-message-actions button {min-height:34px}
+  .spatial-ui :is(.content-grid,.form-grid,.esim-download-grid,.notification-grid,.retention-grid,.retention-fields,.profile-tools-grid) {grid-template-columns:1fr}
+  .spatial-ui :is(.esim-profile,.profile) {padding:18px}
+  .spatial-ui .retention-fields .span-2 {grid-column:auto}
+  .spatial-ui :is(.workspace-panel,.card,.settings-section,.settings-card,.maintenance-panel,.remote-card) {padding:20px}
+  .spatial-ui .workspace-device-tools .sidebar-device-stack {flex-direction:column}
+  .spatial-ui :is(.modal,.modal-backdrop) {align-items:end;padding:12px}
+  .spatial-ui :is(.modal-card,.modal-dialog) {padding:24px 21px;max-height:calc(100dvh - 24px);border-radius:26px}
+  .spatial-ui :is(input,select,textarea) {font-size:16px}
+  .spatial-ui :is(.workspace-inbox-actions,.section-heading) {flex-wrap:wrap}
+  .spatial-ui .workspace-status-footer {flex-wrap:wrap}
+  .spatial-ui .workspace-diagnostics[open] {padding:0 13px 13px}
+  .spatial-ui .workspace-diagnostics[open]>summary {margin-inline:-13px}
+  .spatial-ui .login-shell {padding:20px}
+  .spatial-ui .login-card {padding:26px}
+}
+@media (prefers-reduced-motion:reduce) {
+  .spatial-ui *,.spatial-ui *:before,.spatial-ui *:after {animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .spatial-ui :is(button,.button-link):hover,.spatial-ui button:active {transform:none!important}
+  .spatial-ui :is(.workspace-module,.workspace-focus):before {display:none}
+}
+:root[data-theme=dark] .spatial-ui {
+  --sp-ink:#e7edf7;--sp-muted:#a4b1c5;--sp-surface:#172235;--sp-soft:#1c2b42;--sp-line:#2b3c55;--sp-accent:#a8bfdf;--sp-primary-text:#16263b;--sp-focus:#9ebce5;--sp-glow:#253951;--sp-shadow:0 12px 32px #0002;
+  background:radial-gradient(ellipse at 72% 7%,#22344f 0,transparent 47%),#111c2d;color-scheme:dark;
+}
+:root[data-theme=dark] .spatial-ui :is(.workspace-pill,.tab.active,.theme-switch,.nav-item.active,.workspace-threads,.workspace-thread[aria-pressed=true],.workspace-bubble,.workspace-composer input,.workspace-composer textarea) {background:#263951;color:var(--sp-ink)}
+:root[data-theme=dark] .spatial-ui :is(.esim-profile.active,.profile.enabled) {background:#20334e;border-color:#728bad}
+:root[data-theme=dark] .spatial-ui :is(.workspace-thread-initial,.phone-keypad button,.keypad button) {background:#263951;color:var(--sp-ink)}
+:root[data-theme=dark] .spatial-ui .workspace-module[aria-pressed=true] {border-color:#728bad}
+:root[data-theme=dark] .spatial-ui :is(.task-nav .tab,#nav .nav-item).active {background:#263951;color:var(--sp-ink)}
+:root[data-theme=dark] .spatial-ui .panel-icon {background:#263951;color:var(--sp-ink)}
+:root[data-theme=dark] .spatial-ui :is(.workspace-module,.workspace-focus):before {background:radial-gradient(220px circle at var(--spot-x,100%) var(--spot-y,0%),#99b4df1c 0,transparent 75%)}
+:root[data-theme=dark] .spatial-ui :is(.is-good,.workspace-module-state) {color:#82d7b5}
+@media (max-width:700px) {
+  .spatial-ui .profile-tools-grid {grid-template-columns:1fr}
+  .spatial-ui .esim-intro-actions {flex-wrap:wrap}
+  :root[data-density=compact] .spatial-ui .workspace-module {min-height:90px;padding:12px}
+}

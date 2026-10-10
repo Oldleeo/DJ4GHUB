@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f7f6">
+  <meta name="color-scheme" content="light">
+  <title>老李 Oldlee · 4G 云控制台</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="spatial.css?v=0.6.1">
+</head>
+<body class="spatial-ui" data-console="cloud">
+  <main id="login" class="login-shell">
+    <section class="login-brand" aria-label="老李 Oldlee 云控制台介绍">
+      <img class="brand-avatar login-avatar" src="oldlee-avatar.png" alt="老李 Oldlee IP 形象">
+      <div><span class="eyebrow">OLDLEE PRIVATE CLOUD</span><h1>老李 Oldlee<br>4G 云控制台</h1><p>远程管理连接在 Windows 主机上的大疆 4G 模块：短信、电话、卡片与网络。</p><small class="brand-copyright">© 2026 老李 Oldlee. All rights reserved.</small></div>
+    </section>
+    <form id="login-form" class="login-card">
+      <div class="login-heading"><span class="status-dot"></span><span>私有控制台</span></div>
+      <h2>欢迎回来</h2>
+      <p>输入密码和验证器中的 6 位动态码。</p>
+      <label><span>控制台密码</span><input id="password" type="password" autocomplete="current-password" required></label>
+      <label><span>验证器动态码</span><input id="otp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="000 000" required></label>
+      <button type="submit">安全登录</button>
+      <div id="login-error" class="error" role="alert"></div>
+      <small class="privacy-note">会话使用加密 Cookie、TOTP 和 CSRF 防护。</small>
+    </form>
+  </main>
+
+  <div id="app" class="app-shell" hidden>
+    <aside class="sidebar">
+      <div class="sidebar-brand"><img class="brand-avatar sidebar-avatar" src="oldlee-avatar.png" alt=""><div><strong>老李 Oldlee</strong><small>DJ4GHUB CLOUD</small></div></div>
+      <nav id="nav" class="nav" aria-label="功能导航">
+        <button class="nav-item active" data-view="overview" aria-current="page"><img class="nav-icon" src="icons/layout-dashboard.svg" alt=""><span>概览</span></button>
+        <button class="nav-item" data-view="sms"><img class="nav-icon" src="icons/message.svg" alt=""><span>短信</span></button>
+        <button class="nav-item" data-view="calls"><img class="nav-icon" src="icons/phone.svg" alt=""><span>电话</span></button>
+        <button class="nav-item" data-view="retention"><img class="nav-icon" src="icons/calendar-check.svg" alt=""><span>保号助手</span></button>
+        <button class="nav-item" data-view="esim"><img class="nav-icon" src="icons/device-sim.svg" alt=""><span>eSIM / 卡片</span></button>
+        <button class="nav-item" data-view="network"><img class="nav-icon" src="icons/world.svg" alt=""><span>网络</span></button>
+        <button class="nav-item" data-view="notifications"><img class="nav-icon" src="icons/bell-ringing.svg" alt=""><span>短信转发</span></button>
+        <button class="nav-item" data-view="history"><img class="nav-icon" src="icons/history.svg" alt=""><span>通信记录</span></button>
+        <button class="nav-item" data-view="audit"><img class="nav-icon" src="icons/shield-check.svg" alt=""><span>操作审计</span></button>
+      </nav>
+      <div class="sidebar-footer"><button id="host-pairing" class="secondary full">生成新主机授权码</button><button id="logout" class="text-button">退出登录</button><small>© 2026 老李 Oldlee</small><a href="Tabler-Icons-LICENSE.txt" target="_blank" rel="noopener">界面图标：Tabler Icons · MIT</a></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><span id="page-kicker" class="eyebrow">DEVICE OVERVIEW</span><h1 id="page-title">设备概览</h1></div>
+        <div class="header-actions"><button id="browser-notifications" class="secondary">开启来电提醒</button><button data-command="refresh_status" class="secondary">刷新状态</button></div>
+      </header>
+      <section class="workspace-modules" aria-label="远程模块">
+        <div class="workspace-module-heading"><span>设备工作空间 · <span id="device-count">0</span> 个模块</span></div>
+        <div id="devices" class="devices workspace-module-grid"></div>
+      </section>
+      <div id="empty" class="empty-state"><div class="empty-icon">⌛</div><h2>等待设备主机上线</h2><p>保持 Windows 程序运行，云端会自动连接。</p></div>
+      <div id="device" hidden>
+        <section class="device-hero">
+          <div><span id="online" class="badge">离线</span><h2 id="device-name">DJI 4G Module</h2><p id="device-meta">尚未同步</p></div>
+          <div class="hero-side"><span>安全链路</span><strong>TLS + TOTP</strong></div>
+        </section>
+
+        <section id="overview" class="view active">
+          <section class="workspace-focus" aria-label="当前卡片"><span class="workspace-pill">当前卡片</span><h2 id="workspace-card-title">正在读取卡片</h2><p id="workspace-card-detail">等待主机同步</p><div class="workspace-focus-actions"><button type="button" data-go="sms">查看短信</button><button type="button" class="secondary" data-go="esim">管理卡片</button></div></section>
+          <div class="stats">
+            <article><span>运营商</span><strong id="operator">—</strong><small id="registration">等待同步</small></article>
+            <article><span>网络</span><strong id="network">—</strong><small id="band">频段未知</small></article>
+            <article><span>信号</span><strong id="signal">—</strong><small id="signal-extra">RSRP / RSRQ</small></article>
+            <article><span>SIM</span><strong id="sim">—</strong><small id="iccid">未读取 ICCID</small></article>
+          </div>
+          <div class="content-grid">
+            <section class="card span-2"><div class="section-heading"><div><span class="section-kicker">MODULE</span><h2>模块信息</h2></div></div><div id="module-details" class="detail-grid"></div></section>
+            <section class="card"><div class="section-heading"><div><span class="section-kicker">QUICK ACTIONS</span><h2>快捷操作</h2></div></div><div class="action-grid"><button data-go="sms">发送短信</button><button data-go="calls" class="secondary">拨打电话</button><button data-go="network" class="secondary">网络诊断</button><button data-go="esim" class="secondary">管理卡片</button></div></section>
+          </div>
+        </section>
+
+        <section id="sms" class="view">
+          <div class="view-intro"><div><span class="section-kicker">MESSAGES</span><h2>短信</h2><p>查看模块收件箱并远程发送短信。</p></div><div class="actions"><button data-command="refresh_sms" class="secondary">重新读取</button><button id="clear-sms" class="danger">清空模块短信</button></div></div>
+          <div class="content-grid sms-layout"><section class="card"><h2>发送短信</h2><form id="sms-form" class="form-stack"><label>收件号码<input id="sms-number" inputmode="tel" placeholder="+8613800138000" required></label><label>短信内容<textarea id="sms-message" maxlength="2000" placeholder="输入短信内容" required></textarea></label><div class="form-foot"><span id="sms-count">0 / 2000</span><button type="submit">确认发送</button></div></form></section><section class="card inbox-card"><div class="section-heading"><h2>收件箱</h2><span id="sms-status" class="muted">等待同步</span></div><div class="sms-toolbar"><label><span class="sr-only">搜索收件箱</span><input id="sms-filter" type="search" autocomplete="off" placeholder="搜索号码、正文或验证码"></label><span id="sms-visible" class="muted">0 条</span></div><div id="sms-list" class="messages"></div></section></div>
+        </section>
+
+        <section id="calls" class="view">
+          <div class="view-intro"><div><span class="section-kicker">PHONE</span><h2>电话</h2><p>拨号、接听、挂断、DTMF 和跨网通话音频。</p></div><span id="call-state" class="badge">无通话</span></div>
+          <div class="content-grid"><section class="card"><h2>拨号盘</h2><form id="dial-form" class="inline"><input id="dial-number" inputmode="tel" placeholder="电话号码" required><button type="submit">拨号</button></form><div class="actions"><button id="answer" class="success">接听</button><button id="hangup" class="danger">挂断</button></div><div id="dtmf" class="keypad"></div></section><section class="card"><div class="section-heading"><div><h2>跨网通话音频</h2><p>浏览器麦克风与主机 USB 音频通过 WebRTC 连接。</p></div><span id="audio-state" class="badge">未连接</span></div><div class="actions"><button id="audio-start">连接音频</button><button id="audio-stop" class="secondary">断开</button></div><audio id="remote-audio" autoplay playsinline></audio><p class="callout">需要模块枚举出 USB 音频输入和输出；无音频设备时仍可远程控制电话。</p></section></div>
+        </section>
+
+        <section id="retention" class="view">
+          <div class="view-intro"><div><span class="section-kicker">NUMBER RETENTION</span><h2>保号助手</h2><p>管理多张海外 SIM / eSIM 的保号日期，通过 Bark 或 Telegram 提醒。不包含充值和支付。</p></div><div class="actions"><button id="retention-new">添加卡片</button><button id="retention-refresh" class="secondary">刷新</button></div></div>
+          <div class="retention-stats"><article><span>全部</span><strong id="retention-total">0</strong></article><article><span>即将到期</span><strong id="retention-due-count">0</strong></article><article><span>紧急 / 宽限期</span><strong id="retention-urgent-count">0</strong></article><article><span>回收风险</span><strong id="retention-risk-count">0</strong></article></div>
+          <form id="retention-form" class="card retention-form" hidden>
+            <div class="section-heading"><div><span class="section-kicker">CARD FILE</span><h2 id="retention-form-title">添加保号卡片</h2></div><button id="retention-cancel" class="secondary" type="button">取消</button></div>
+            <input id="retention-id" type="hidden">
+            <div class="form-grid retention-fields"><label>卡片名称<input id="retention-label" maxlength="80" required placeholder="例如：英国主号"></label><label>国家 / 地区<input id="retention-country" maxlength="80" placeholder="United Kingdom"></label><label>运营商<input id="retention-operator" maxlength="100" placeholder="Vodafone"></label><label>号码<input id="retention-phone" maxlength="80" inputmode="tel" placeholder="可选"></label><label>ICCID<input id="retention-iccid" maxlength="32" inputmode="numeric" placeholder="可选；用于当前卡验证"></label><label>套餐名称<input id="retention-plan" maxlength="120" placeholder="精确到套餐"></label><label>下次保号日期<input id="retention-next-due" type="date"></label><label>到期后宽限期（天）<input id="retention-grace" type="number" min="0" max="730" value="0"></label><label class="span-2">保号动作说明<textarea id="retention-action-note" maxlength="500" placeholder="例如：发一条短信或产生一次通话"></textarea></label><label class="span-2">官方规则来源<input id="retention-source-url" type="url" maxlength="1000" placeholder="https://..."></label></div>
+            <div class="retention-form-foot"><label class="check-row"><input id="retention-enabled" type="checkbox" checked> 启用到期提醒</label><button type="submit">保存卡片</button></div>
+          </form>
+          <div id="retention-list" class="retention-grid"></div>
+          <p class="callout">默认在到期前 30、14、7、1 天及当天提醒；到期后按宽限期和回收风险提醒。规则以你录入的具体套餐为准。</p>
+        </section>
+
+        <section id="esim" class="view">
+          <div class="view-intro"><div><span class="section-kicker">SIM &amp; ESIM</span><h2>eSIM / 卡片</h2><p>读取卡片、管理 Profile、健康检查与通讯录兼容性。</p></div><div class="actions"><button id="load-esim">读取卡片</button><button id="esim-health" class="secondary">健康检查</button><button id="phonebook-probe" class="secondary">通讯录检测</button><button id="read-esim-notes" class="secondary">电脑备注</button><button id="read-module-notes" class="secondary">模块资料库</button></div></div>
+          <div id="esim-summary" class="card callout">点击“读取卡片”获取实时信息。</div>
+          <div id="esim-profiles" class="profile-grid"></div>
+          <details id="esim-download-panel" class="card download-panel"><summary><strong>下载新 Profile</strong><span>扫描或填写 SM-DP+ 激活信息</span></summary><div class="esim-qr-import"><div><img src="icons/qrcode.svg" alt=""><strong>扫描 eSIM 二维码</strong><small>画面只在当前浏览器解析，识别后不会自动下载。</small></div><div class="actions"><button id="esim-scan-qr" type="button"><img src="icons/camera.svg" alt="">打开摄像头</button><button id="esim-choose-qr" class="secondary" type="button"><img src="icons/photo.svg" alt="">选择二维码图片</button><input id="esim-qr-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></div><p id="esim-qr-status" class="muted" role="status">等待扫描或选择图片。</p></div><input id="esim-activation-code" type="text" readonly hidden><form id="esim-download-form" class="form-grid"><label>SM-DP+ 地址<input id="esim-smdp" required placeholder="smdp.example.com"></label><label>Matching ID<input id="esim-matching-id"></label><label>确认码<input id="esim-confirmation"></label><label>模块 IMEI<input id="esim-imei" inputmode="numeric" required></label><label>目标 AID<input id="esim-aid"></label><button type="submit">确认下载</button></form></details>
+          <pre id="esim-output" class="result-panel" hidden></pre>
+        </section>
+
+        <section id="network-view" class="view" data-view-id="network">
+          <div class="view-intro"><div><span class="section-kicker">CONNECTIVITY</span><h2>网络</h2><p>检查蜂窝注册、USB 网卡、系统出口与公网连通性。</p></div><div class="actions"><button id="read-network">刷新诊断</button><button id="network-local" class="secondary">本机网卡</button><button id="network-traffic" class="secondary">流量统计</button><button id="network-activity" class="secondary">连接活动</button><button id="check-4g" class="secondary">检测 4G 公网</button><button id="check-proxy" class="secondary">检测代理</button></div></div>
+          <div class="content-grid"><section class="card"><h2>APN 设置</h2><form id="apn-form" class="inline wrap"><input id="apn" placeholder="APN" required><select id="pdn"><option>IPV4V6</option><option>IP</option><option>IPV6</option></select><button type="submit">保存 APN</button></form><h2>USB 网卡模式</h2><div class="mode-grid"><button data-usbnet="0" class="secondary">0 · 短信/管理</button><button data-usbnet="1" class="secondary">1 · 4G 网卡</button><button data-usbnet="2" class="secondary">2 · 实验</button><button data-usbnet="3" class="secondary">3 · 实验</button></div><div class="actions spaced"><button id="enable-network" class="secondary">启用系统网卡</button><button id="reboot-module" class="danger">重启模块</button></div></section><section class="card"><h2>诊断结果</h2><pre id="network-output" class="result-panel">尚未读取网络状态</pre></section></div>
+        </section>
+
+        <section id="notifications" class="view">
+          <div class="view-intro"><div><span class="section-kicker">MESSAGE FORWARDING</span><h2>短信转发</h2><p>将设备主机后续收到的新短信转发到 Bark 或 Telegram，不补发历史短信。</p></div><button id="load-notifications" class="secondary">读取配置</button></div>
+          <form id="notification-form" class="notification-grid">
+            <section class="card channel-card"><div class="channel-title"><span class="channel-logo bark-logo">B</span><div><h2>Bark</h2><p id="bark-state" class="muted">未配置</p></div><label class="switch"><input id="bark-enabled" type="checkbox"><span></span></label></div><label>Bark 推送地址<input id="bark-url" type="password" autocomplete="off" placeholder="https://api.day.app/你的Key"></label><label>分组名称（可选）<input id="bark-group" maxlength="80" placeholder="DJ4GHUB"></label><label class="clear-option"><input id="bark-clear" type="checkbox"> 清除已保存的 Bark 地址</label><button type="button" id="test-bark" class="secondary">发送 Bark 测试</button></section>
+            <section class="card channel-card"><div class="channel-title"><span class="channel-logo telegram-logo">T</span><div><h2>Telegram</h2><p id="telegram-state" class="muted">未配置</p></div><label class="switch"><input id="telegram-enabled" type="checkbox"><span></span></label></div><label>Bot Token<input id="telegram-token" type="password" autocomplete="off" placeholder="已保存时可留空"></label><label>Chat ID<input id="telegram-chat-id" autocomplete="off" placeholder="123456789"></label><label class="clear-option"><input id="telegram-clear" type="checkbox"> 清除已保存的 Bot Token</label><button type="button" id="test-telegram" class="secondary">发送 Telegram 测试</button></section>
+            <div class="notification-save"><p id="notification-status" class="muted">密钥保存在设备主机，云端执行完会清除命令中的密钥。</p><button type="submit">保存转发配置</button></div>
+          </form>
+        </section>
+
+        <section id="history" class="view">
+          <div class="view-intro"><div><span class="section-kicker">HISTORY</span><h2>通信记录</h2><p>查看电话和短信历史。</p></div><div class="segmented"><button data-history-kind="" class="active">全部</button><button data-history-kind="sms">短信</button><button data-history-kind="call">电话</button></div></div><section class="card"><div id="history-list" class="records">点击筛选条件读取记录</div></section>
+        </section>
+
+        <section id="audit" class="view">
+          <div class="view-intro"><div><span class="section-kicker">SECURITY LOG</span><h2>操作审计</h2><p>云控制台的远程操作记录。</p></div></div><section class="card"><div id="audit-list" class="records"></div></section>
+        </section>
+      </div>
+    </main>
+    <div id="toast" class="toast" hidden></div>
+    <div id="esim-qr-scanner" class="modal" hidden><section class="modal-card qr-modal" role="dialog" aria-modal="true" aria-labelledby="esim-qr-title"><div class="section-heading"><h2 id="esim-qr-title">扫描 eSIM 二维码</h2><button id="esim-qr-close" class="secondary icon-button" type="button" aria-label="关闭">×</button></div><div class="camera-frame"><video id="esim-qr-video" autoplay muted playsinline></video><span aria-hidden="true"></span></div><canvas id="esim-qr-canvas" hidden></canvas><p id="esim-camera-status" class="muted">正在请求摄像头权限…</p><div class="actions end"><button id="esim-qr-cancel" class="secondary" type="button">取消</button></div></section></div>
+    <div id="confirm-modal" class="modal" hidden><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title"><span class="warning-badge">请确认</span><h2 id="confirm-title">确认远程操作</h2><p id="confirm-message"></p><div class="actions end"><button id="confirm-cancel" class="secondary">取消</button><button id="confirm-ok" class="danger">继续执行</button></div></section></div>
+  </div>
+  <script src="jsQR.js"></script>
+  <script src="esim-qr.js"></script>
+  <script src="spatial.js?v=0.6.1"></script>
+  <script src="app.js"></script>
+</body>
+</html>
