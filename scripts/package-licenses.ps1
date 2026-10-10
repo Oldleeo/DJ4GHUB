@@ -16,11 +16,10 @@ function Copy-Notices([string]$Directory, [string]$Component, [switch]$Required)
 }
 Push-Location $repo
 try {
-    & go mod download
-    if ($LASTEXITCODE) { throw 'Cannot download resolved module distributions for license packaging.' }
-    $modules = & go list -m -f '{{.Path}}|{{.Version}}|{{if .Replace}}{{.Replace.Dir}}{{else}}{{.Dir}}{{end}}' all
+    # Enumerate modules actually linked into the shipped backend, not unused test dependencies.
+    $modules = & go list -deps -f '{{if .Module}}{{.Module.Path}}|{{.Module.Version}}|{{if .Module.Replace}}{{.Module.Replace.Dir}}{{else}}{{.Module.Dir}}{{end}}{{end}}' ./cmd/dj4ghub-macos
     if ($LASTEXITCODE) { throw 'Cannot enumerate Go licenses.' }
-    foreach ($line in $modules) {
+    foreach ($line in ($modules | Where-Object { $_ } | Sort-Object -Unique)) {
         $fields = $line.Split('|', 3)
         if (!$fields[1]) { continue } # The main project license is already included.
         Copy-Notices $fields[2] $fields[0] -Required
