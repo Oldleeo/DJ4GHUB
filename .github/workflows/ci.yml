@@ -5,6 +5,7 @@ permissions:
 jobs:
   windows:
     runs-on: windows-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
@@ -27,6 +28,14 @@ jobs:
       - name: Verify install, upgrade and uninstall
         shell: pwsh
         run: ./scripts/test-installer.ps1
+      - name: Upload installer diagnostic logs
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: installer-smoke-logs
+          path: artifacts/installer-smoke/*.log
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Upload verified Windows packages
         uses: actions/upload-artifact@v6
         with:

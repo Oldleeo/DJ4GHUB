@@ -11,7 +11,7 @@ function Copy-Notices([string]$Directory, [string]$Component, [switch]$Required)
     if ($files.Count) {
         $target = Join-Path $output ($Component -replace '[^a-zA-Z0-9_.-]', '_')
         New-Item -ItemType Directory -Path $target -Force | Out-Null
-        $files | Copy-Item -Destination $target
+        $files | Copy-Item -Destination $target -Force
     }
 }
 Push-Location $repo

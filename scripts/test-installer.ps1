@@ -5,22 +5,24 @@ if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hoste
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 $testRoot = Join-Path $env:RUNNER_TEMP ("dj4ghub-install-qa-" + [guid]::NewGuid().ToString('N'))
+$logRoot = Join-Path $repo 'artifacts/installer-smoke'
+New-Item -ItemType Directory -Path $logRoot -Force | Out-Null
 $app = Join-Path $testRoot 'app'
 New-Item -ItemType Directory -Path $testRoot -Force | Out-Null
 $installer = Join-Path $repo 'dist/releases/DJ4GHUB-Windows-x64-0.6.7-Setup.exe'
 function Run-Setup([string]$File, [string[]]$Arguments) {
-    $process = Start-Process -FilePath $File -ArgumentList $Arguments -WindowStyle Hidden -PassThru
-    if (!$process.WaitForExit(240000)) {
-        $process.Kill()
-        throw 'Installer/uninstaller timeout.'
-    }
+    Write-Host "Running setup: $([IO.Path]::GetFileName($File))"
+    # Inno launchers can spawn a temporary second-stage executable. Wait for the tree.
+    $log = Join-Path $logRoot ([guid]::NewGuid().ToString('N') + '.log')
+    $process = Start-Process -FilePath $File -ArgumentList ($Arguments + "/LOG=`"$log`"") -WindowStyle Hidden -Wait -PassThru
     if ($process.ExitCode -ne 0) { throw "Setup failed with exit code $($process.ExitCode)." }
 }
 function Assert-RunningInstanceBlocked([string]$File) {
     $mutex = [Threading.Mutex]::new($true, 'Local\DJ4Hub.Windows')
     try {
-        $process = Start-Process -FilePath $File -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/DIR=`"$app`"") -WindowStyle Hidden -PassThru
-        if (!$process.WaitForExit(30000)) { $process.Kill(); throw 'Running-instance check timed out.' }
+        Write-Host "Checking running-instance guard: $([IO.Path]::GetFileName($File))"
+        $log = Join-Path $logRoot ('blocked-' + [guid]::NewGuid().ToString('N') + '.log')
+        $process = Start-Process -FilePath $File -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/DIR=`"$app`"", "/LOG=`"$log`"") -WindowStyle Hidden -Wait -PassThru
         if ($process.ExitCode -eq 0) { throw 'Installer/uninstaller did not block a running instance.' }
     } finally { $mutex.ReleaseMutex(); $mutex.Dispose() }
 }
