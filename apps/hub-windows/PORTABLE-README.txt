@@ -1,4 +1,4 @@
-DJ4GHUB · 老李 Oldlee — Windows 公开源码准备版 0.6.7
+DJ4GHUB · 老李 Oldlee — Windows 公开预览版 0.6.7
 
 启动 DJ4Hub.Windows.exe。请保留整个目录，不能只复制这一个 EXE。
 需要 Windows 10/11 x64、WebView2 Runtime 和兼容模块的已签名 USB/AT 驱动。

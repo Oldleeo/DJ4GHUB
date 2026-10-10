@@ -21,6 +21,19 @@ jobs:
       - name: Test and build
         shell: pwsh
         run: ./scripts/build-windows.ps1
+      - name: Build Windows installer and portable ZIP
+        shell: pwsh
+        run: ./scripts/build-installer.ps1
+      - name: Verify install, upgrade and uninstall
+        shell: pwsh
+        run: ./scripts/test-installer.ps1
+      - name: Upload verified Windows packages
+        uses: actions/upload-artifact@v6
+        with:
+          name: windows-installers
+          path: dist/releases/*
+          if-no-files-found: error
+          retention-days: 14
   relay:
     runs-on: ubuntu-latest
     steps:

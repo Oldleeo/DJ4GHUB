@@ -4,15 +4,19 @@
 
 当前目标是 Windows 10/11 x64。准备兼容模块、支持数据传输的 USB 线、稳定供电和正确的已签名 USB/AT 驱动。设备管理器中应出现 **Quectel USB AT Port**；当前自动发现限定 `VID_2CA3&PID_4006`。不支持的 USB 变体不能只凭“大疆 4G 模块”名称保证兼容。
 
-WebView2 Runtime 用于界面；.NET 8 SDK 与 Go 只在从源码构建时需要。未来便携包包含 .NET 运行时，不包含硬件驱动。
+普通用户直接使用 [Windows 安装包](https://github.com/Oldleeo/DJ4GHUB/releases/download/v0.6.7/DJ4GHUB-Windows-x64-0.6.7-Setup.exe)。无需 Git、Go 或 .NET SDK；安装包包含本地后台与 .NET 运行时，缺少 WebView2 时会联网安装官方组件，不包含硬件驱动。
 
 首次用电脑直连 USB 口排查，不要先叠加无供电扩展坞。没有驱动时请向硬件/驱动供应方获取可信、已签名版本；本项目不静默安装驱动，也不建议关闭系统安全验证。
 
 ## 2. 启动
 
-源码版：在仓库根目录运行 `./scripts/build-windows.ps1`，输出在 `dist/windows/portable/`。Release 发布前没有正式下载链接，请不要从未知站点下载同名 EXE。
+推荐：双击 `DJ4GHUB-Windows-x64-0.6.7-Setup.exe` → 阅读安装说明与许可 → 安装 → 从桌面启动 **DJ4GHUB**。默认安装到 `%LOCALAPPDATA%\Programs\DJ4GHUB`，当前用户安装不要求管理员权限。下载与校验和只认[本仓库 Release](https://github.com/Oldleeo/DJ4GHUB/releases/tag/v0.6.7)；安装包暂未代码签名，Windows 可能显示未知发布者。
 
-完整解压便携包，双击 `DJ4Hub.Windows.exe`。`backend/`、运行时文件、许可证都要保留。后台会自动启动，不用另开 Go 程序。本机配置放在 `%LOCALAPPDATA%\DJ4Hub\`，不是压缩包内。
+升级先用系统托盘“退出”关闭旧版，安装器会拒绝在程序运行时升级，避免后台和串口争抢。卸载保留 `%LOCALAPPDATA%\DJ4Hub\` 中的配置和短信；不同安装位置不要同时运行。
+
+可选便携版：完整解压 `Portable.zip`，双击 `DJ4Hub.Windows.exe`，保留 `backend/`、运行时、许可证。便携版不自动安装 WebView2；后台会自动启动，不用另开程序。开发者才需要源码构建：`./scripts/build-windows.ps1`，输出 `dist/windows/portable/`。
+
+**本地使用到这里即可，不需要阅读云端部署步骤。** 一块或两块模块都在本机运行。只有手机远程控制才需要可选云中继。
 
 进入概览后确认 USB 检测、AT 可用、SIM 就绪、网络注册。刷新只重新读取状态，不应最小化窗口；模块恢复中可能短暂显示“未知”。
 

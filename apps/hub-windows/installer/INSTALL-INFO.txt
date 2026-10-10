@@ -1,0 +1,15 @@
+DJ4GHUB · 老李 Oldlee
+
+安装完成后双击桌面的 DJ4GHUB，即可使用本地功能；无需服务器、云账号、Go 或 .NET SDK。
+
+安装包包含 Windows 程序、后台和 .NET 运行时。如果电脑缺少 Microsoft WebView2，将联网安装官方运行环境。
+
+云同步默认关闭。只有需要手机远程访问时，才需额外设置自己的云中继；本安装包不提供公共云账号。
+
+硬件的 USB / AT 驱动须已正确安装。不会自动安装未签名驱动，不会修改你的 SIM 卡，也不会自动发送短信或拨号。
+
+升级前请从系统托盘退出旧版。卸载只移除程序，保留本机用户配置和短信记录。
+
+项目遵循 PolyForm Noncommercial 1.0.0，第三方许可随包保留。
+Copyright 2026 老李 Oldlee · https://x.com/oldleeoo
+Required Notice: Copyright iniwex5 (https://github.com/iniwex5/vohive)

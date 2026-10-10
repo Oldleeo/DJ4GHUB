@@ -8,17 +8,19 @@
 
 短信 · 电话 · eSIM · 双模块 · Bark / Telegram · 自建云控制台
 
-Windows 10 / 11 x64 ｜ Go + WPF + WebView2 ｜ 0.6.7 公开源码准备版
+Windows 10 / 11 x64 ｜ Go + WPF + WebView2 ｜ 0.6.7 公开预览版
 
 [![源码检查与构建](https://github.com/Oldleeo/DJ4GHUB/actions/workflows/ci.yml/badge.svg)](https://github.com/Oldleeo/DJ4GHUB/actions/workflows/ci.yml)
 
 [GitHub 仓库](https://github.com/Oldleeo/DJ4GHUB) · [问题反馈](https://github.com/Oldleeo/DJ4GHUB/issues)
 
+[**下载安装包 · Windows x64**](https://github.com/Oldleeo/DJ4GHUB/releases/download/v0.6.7/DJ4GHUB-Windows-x64-0.6.7-Setup.exe) · [所有下载 / 校验和](https://github.com/Oldleeo/DJ4GHUB/releases/tag/v0.6.7)
+
 [快速开始](docs/QUICK_START.md) · [双模块管理](docs/DUAL_MODULES.md) · [自建云端](docs/SELF_HOSTING.md) · [技术细节](docs/TECHNICAL_DETAILS.md) · [老李的 X](https://x.com/oldleeoo)
 
 </div>
 
-> 这是面向个人使用的**源码公开版本**，继承上游 **PolyForm Noncommercial 1.0.0** 许可，并非允许任意商用的 MIT / Apache 项目。当前尚未发布 GitHub Release；不提供公共云服务、不附带个人凭据。所有公开截图使用演示数据。
+> 面向个人使用，继承上游 **PolyForm Noncommercial 1.0.0** 许可，并非允许任意商用的 MIT / Apache 项目。**本地使用只需安装，不需要部署服务器。** 不提供公共云服务、不附带个人凭据。所有公开截图使用演示数据。
 
 ## 为什么做这个
 
@@ -58,11 +60,15 @@ Windows 10 / 11 x64 ｜ Go + WPF + WebView2 ｜ 0.6.7 公开源码准备版
 
 ## 三步开始本地使用
 
-1. 在 Windows 10/11 x64 上准备兼容 DJI 4G 模块、稳定 USB 供电、已签名 USB/AT 驱动和 WebView2 Runtime。
-2. 使用未来 Release 的完整便携包，或按下面命令构建。**完整解压后双击 `DJ4Hub.Windows.exe`，不要单独复制 EXE。**
+1. [下载 Windows 安装包](https://github.com/Oldleeo/DJ4GHUB/releases/download/v0.6.7/DJ4GHUB-Windows-x64-0.6.7-Setup.exe)，双击安装。后台、.NET 运行时和桌面图标自动配置；缺少 WebView2 时会联网安装 Microsoft 官方运行环境。
+2. 双击桌面的 **DJ4GHUB**，插入兼容 DJI 4G 模块。USB/AT 驱动需正确安装，不会自动安装未签名驱动。
 3. 插入一块或两块模块，选择模块卡片，即可查看状态和收件箱。先用低风险读取操作确认识别，再自行测试短信与电话。
 
 **不启用云同步也能正常使用本地功能。** 默认云地址为空、主机同步关闭；本地后台只监听 `127.0.0.1`。
+
+无需安装 Git、Go 或 .NET SDK。升级前从托盘退出旧版；卸载保留配置与短信。安装包暂未代码签名，Windows 可能提示“未知发布者”，请只从本仓库 Release 下载并核对 SHA-256。默认安装到当前用户的 `%LOCALAPPDATA%\Programs\DJ4GHUB`，不修改其他目录中的旧版本。
+
+喜欢免安装的用户可下载同一 Release 的 `Portable.zip`，完整解压后启动 `DJ4Hub.Windows.exe`，不能只复制一个 EXE。便携版需电脑已有 WebView2。
 
 <details>
 <summary>从源码构建 Windows 包</summary>

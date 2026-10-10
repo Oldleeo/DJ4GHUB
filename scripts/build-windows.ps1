@@ -11,9 +11,10 @@ try {
     New-Item -ItemType Directory -Path dist/windows -Force | Out-Null
     & go build -trimpath -ldflags '-s -w' -o dist/windows/dj4ghub-service.exe ./cmd/dj4ghub-macos
     if ($LASTEXITCODE) { throw 'Backend build failed.' }
-    & dotnet publish apps/hub-windows/src/DJ4Hub.Windows/DJ4Hub.Windows.csproj -c Release -r win-x64 --self-contained true -p:Platform=x64 -o dist/windows/portable
+    & dotnet publish apps/hub-windows/src/DJ4Hub.Windows/DJ4Hub.Windows.csproj -c Release -r win-x64 --self-contained true -p:Platform=x64 -p:DebugType=None -p:DebugSymbols=false -o dist/windows/portable
     if ($LASTEXITCODE) { throw 'Windows publish failed.' }
     if (!(Test-Path dist/windows/portable/backend/dj4ghub-service.exe)) { throw 'Backend missing from portable package.' }
+    & "$PSScriptRoot/package-licenses.ps1"
     if (!$SkipTests) {
         & dotnet run --project apps/hub-windows/tests/SupervisionSmoke -c Release -- dist/windows/dj4ghub-service.exe
         if ($LASTEXITCODE) { throw 'Host supervision smoke failed.' }

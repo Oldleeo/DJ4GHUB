@@ -24,6 +24,10 @@ git commit -m "Prepare sanitized public source and documentation"
 
 ## 发布二进制
 
+在干净 Windows 构建环境依次运行 `./scripts/build-windows.ps1`、`./scripts/build-installer.ps1`。安装工具固定版本和上游 SHA-256；WebView2 安装组件校验 Microsoft Authenticode 签名。产物在 `dist/releases/`：安装 EXE、完整便携 ZIP、SHA256SUMS.txt。CI 只在全部构建及安装烟测成功后上传 `windows-installers` artifact；发布前再核对产物校验和。
+
+`test-installer.ps1` 只允许在一次性 GitHub-hosted runner 上运行，不能在用户当前电脑运行安装/卸载测试。它验证安装、快捷方式、原位升级、演示后台、云默认关闭、卸载和数据保留；不访问真实模块。
+
 从干净 checkout 构建，不复制自己正在运行的安装目录。完整便携目录压成 ZIP，附 SHA-256 校验和、版本、系统要求与已知限制。代码和二进制都要保留 LICENSE、THIRD_PARTY_NOTICES 与实际分发的依赖许可。
 
 不要把用户目录、预绑定 Bark/Telegram 或作者私有中继混进便携包。当前 app 图标/品牌保留是有意的版权展示，不是秘密。签名尚未提供时不要声称微软或 DJI 认证。
